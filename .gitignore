@@ -2,3 +2,7 @@
 ~$*
 Thumbs.db
 *.rdr.flock
+db/
+incremental_db/
+output_files/
+simulation/
