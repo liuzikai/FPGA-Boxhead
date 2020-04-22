@@ -8,3 +8,4 @@ output_files/
 simulation/
 *.bak
 .metadata
+.qsys_edit 
