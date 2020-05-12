@@ -3,29 +3,11 @@ import re
 header_p = re.compile(r"module (.+) ?\((.+)\)")
 param_p = re.compile(r"(input|output|inout) ?(logic |wire )?(\[[0-9:]+\] )?(.+)")
 
-s = """module lab8_soc (
-		input  wire        clk_clk,                //             clk.clk
-		input  wire [3:0]  key_wire_export,        //        key_wire.export
-		output wire [7:0]  keycode_export,         //         keycode.export
-		output wire [1:0]  otg_hpi_address_export, // otg_hpi_address.export
-		output wire        otg_hpi_cs_export,      //      otg_hpi_cs.export
-		input  wire [15:0] otg_hpi_data_in_port,   //    otg_hpi_data.in_port
-		output wire [15:0] otg_hpi_data_out_port,  //                .out_port
-		output wire        otg_hpi_r_export,       //       otg_hpi_r.export
-		output wire        otg_hpi_reset_export,   //   otg_hpi_reset.export
-		output wire        otg_hpi_w_export,       //       otg_hpi_w.export
-		input  wire        reset_reset_n,          //           reset.reset_n
-		output wire        sdram_clk_clk,          //       sdram_clk.clk
-		output wire [12:0] sdram_wire_addr,        //      sdram_wire.addr
-		output wire [1:0]  sdram_wire_ba,          //                .ba
-		output wire        sdram_wire_cas_n,       //                .cas_n
-		output wire        sdram_wire_cke,         //                .cke
-		output wire        sdram_wire_cs_n,        //                .cs_n
-		inout  wire [31:0] sdram_wire_dq,          //                .dq
-		output wire [3:0]  sdram_wire_dqm,         //                .dqm
-		output wire        sdram_wire_ras_n,       //                .ras_n
-		output wire        sdram_wire_we_n         //                .we_n
-	);
+s = """module AddRoundKey (
+    input logic [127:0] data_in, 
+    input logic [127:0] round_key, 
+    output logic [127:0] data_out
+    );
 """
 
 # Remove comments and merge lines
