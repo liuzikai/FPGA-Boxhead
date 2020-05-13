@@ -3,11 +3,22 @@ import re
 header_p = re.compile(r"module (.+) ?\((.+)\)")
 param_p = re.compile(r"(input|output|inout) ?(logic |wire )?(\[[0-9:]+\] )?(.+)")
 
-s = """module AddRoundKey (
-    input logic [127:0] data_in, 
-    input logic [127:0] round_key, 
-    output logic [127:0] data_out
-    );
+s = """module lab9_soc (
+		output wire [31:0] aes_export_new_signal, // aes_export.new_signal
+		input  wire        clk_clk,               //        clk.clk
+		input  wire        reset_reset_n,         //      reset.reset_n
+		output wire        sdram_clk_clk,         //  sdram_clk.clk
+		output wire [12:0] sdram_wire_addr,       // sdram_wire.addr
+		output wire [1:0]  sdram_wire_ba,         //           .ba
+		output wire        sdram_wire_cas_n,      //           .cas_n
+		output wire        sdram_wire_cke,        //           .cke
+		output wire        sdram_wire_cs_n,       //           .cs_n
+		inout  wire [31:0] sdram_wire_dq,         //           .dq
+		output wire [3:0]  sdram_wire_dqm,        //           .dqm
+		output wire        sdram_wire_ras_n,      //           .ras_n
+		output wire        sdram_wire_we_n        //           .we_n
+	);
+);
 """
 
 # Remove comments and merge lines
