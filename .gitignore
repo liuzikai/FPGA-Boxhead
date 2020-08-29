@@ -18,8 +18,8 @@ RemoteSystemsTempFiles/
 # Reference: https://github.com/github/gitignore/blob/64ef3e4f0036c0f33453fd8bce8030da87448743/Global/Quartus2.gitignore
 
 # ignore hdl source files in top level directory
-*.vhd
-*.v
+# *.vhd
+# *.v
 
 # ignore Quartus II generated files
 *sopc_*
