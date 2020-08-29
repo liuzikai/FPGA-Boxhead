@@ -1,12 +1,117 @@
 .DS_Store
+
 ~$*
 Thumbs.db
+
 *.rdr.flock
-db/
-incremental_db/
-output_files/
-simulation/
+*.dSYM
 *.bak
+
+output_files/
+
 .metadata
 .qsys_edit 
-*.dSYM
+
+obj/
+RemoteSystemsTempFiles/
+
+# Reference: https://github.com/github/gitignore/blob/64ef3e4f0036c0f33453fd8bce8030da87448743/Global/Quartus2.gitignore
+
+# ignore hdl source files in top level directory
+*.vhd
+*.v
+
+# ignore Quartus II generated files
+*sopc_*
+*.jdi
+*.ptf.*
+*.sof
+*.pof
+*.qws
+*.smsg
+*_inst.vhd
+*_generation_script*
+*.done
+*.txt
+*.qarlog
+*.rpt
+*.summary
+*.qws
+*.cmp
+*.eqn
+*.html
+*.jpg
+*.bak
+*.qar
+*.sopc_builder
+*example*
+*~
+*.sdc
+*.tcl
+*.pin
+*.mif
+*.hex
+
+# ignore Quartus II generated folders
+db/
+incremental_db/
+simulation/
+timing/
+testbench/
+*_sim/
+
+
+# Reference: https://github.com/github/gitignore/blob/64ef3e4f0036c0f33453fd8bce8030da87448743/Global/ModelSim.gitignore
+
+# ignore ModelSim generated files and directories (temp files and so on)
+[_@]*
+
+# ignore compilation output of ModelSim
+*.mti
+*.dat
+*.dbs
+*.psm
+*.bak
+*.cmp
+# *.jpg
+# *.html
+*.bsf
+
+# ignore simulation output of ModelSim
+wlf*
+*.wlf
+*.vstf
+*.ucdb
+cov*/
+transcript*
+sc_dpiheader.h
+vsim.dbg
+
+# Reference: https://github.com/github/gitignore/blob/64ef3e4f0036c0f33453fd8bce8030da87448743/Global/Eclipse.gitignore
+
+*.pydevproject
+.project
+.metadata
+bin/**
+tmp/**
+tmp/**/*
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.classpath
+.settings/
+.loadpath
+
+# External tool builders
+.externalToolBuilders/
+
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+# CDT-specific
+.cproject
+
+# PDT-specific
+.buildpath
