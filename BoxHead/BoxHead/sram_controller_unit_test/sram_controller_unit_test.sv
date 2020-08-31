@@ -1,7 +1,11 @@
 module sram_controller_unit_test (
     input  logic        CLOCK_50,
 
-    output logic        SRAM_CE, SRAM_UB, SRAM_LB, SRAM_OE, SRAM_WE,
+    output logic        SRAM_CE, 
+                        SRAM_UB, 
+                        SRAM_LB, 
+                        SRAM_OE, 
+                        SRAM_WE,
     output logic [19:0] SRAM_ADDR,
     inout  wire  [15:0] SRAM_DQ,
 
