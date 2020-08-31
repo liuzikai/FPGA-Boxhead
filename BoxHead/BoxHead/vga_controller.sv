@@ -36,12 +36,12 @@ module vga_controller (
     input  logic       reset,       // Active-high reset signal
 
     output logic [9:0] vga_x,      // horizontal coordinate
-                       vga_y       // vertical coordinate
+                       vga_y,      // vertical coordinate
     
     output logic       VGA_HS,      // Horizontal sync pulse.  Active low
                        VGA_VS,      // Vertical sync pulse.  Active low
     output logic       VGA_BLANK_N, // Blanking interval indicator.  Active low.
-                       VGA_SYNC_N,  // Composite Sync signal.  Active low.  We don't use it in this lab,
+                       VGA_SYNC_N   // Composite Sync signal.  Active low.  We don't use it in this lab,
                                     //     but the video DAC on the DE2 board requires an input for it.
 );     
     
