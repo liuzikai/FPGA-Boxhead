@@ -23,7 +23,13 @@ module sram_controller_single_toplevel (
         .vga_x(10'b0),
         .vga_y(10'b0),
         .vga_data(16'b0),
-        .*
+        .SRAM_CE(SRAM_CE),
+		  .SRAM_UB(SRAM_UB),
+		  .SRAM_LB(SRAM_LB),
+		  .SRAM_OE(SRAM_OE),
+		  .SRAM_WE(SRAM_WE),
+		  .SRAM_ADDR(SRAM_ADDR),
+        .SRAM_DQ(SRAM_DQ)
     );
 
 

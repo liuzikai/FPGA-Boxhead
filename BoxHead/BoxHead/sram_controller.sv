@@ -87,7 +87,7 @@ module sram_controller (
 
     logic [19:0] program_addr, vga_addr;
     assign program_addr = {~display_frame, program_y[8:0], program_x};  // program write to hidden frame
-    assign vga_addr = = {display_frame, vga_y[8:0], vga_x};  // vga write to display frame
+    assign vga_addr = {display_frame, vga_y[8:0], vga_x};  // vga write to display frame
 
 
     // Control SRAM based on state machine
