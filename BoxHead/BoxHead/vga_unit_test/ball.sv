@@ -15,7 +15,7 @@
 
 /**
  * Module: ball
- * Input: Clk, Reset, frame_clk, [7:0] keycode, [9:0] DrawX, [9:0] DrawY
+ * Input: clk, reset, frame_clk, [7:0] keycode, [9:0] vga_x, [9:0] vga_y
  * Output: is_ball
  * Description: This is the ball control routine. It handles the position and 
                 movement the ball and react to key event. Given current VGA 
@@ -23,14 +23,17 @@
                 the range of the ball.
  */
 
-module  ball ( input         Clk,                // 50 MHz clock
-                             Reset,              // Active-high reset signal
-                             frame_clk,          // The clock indicating a new frame (~60Hz)
-               input [7:0]   keycode,
-               input [9:0]   DrawX, DrawY,       // Current pixel coordinates
-               output logic  is_ball,            // Whether current pixel belongs to ball or background
-               output [7:0]  LEDG
-              );
+module ball ( 
+    input logic         clk,                // 50 MHz clock
+    input logic         reset,              // Active-high reset signal
+    input logic         frame_clk,          // The clock indicating a new frame (~60Hz)
+    input logic   [7:0] keycode,
+    input logic   [9:0] vga_x, vga_y,       // Current pixel coordinates
+    
+    output logic        is_ball,            // Whether current pixel belongs to ball or background
+
+    output logic  [7:0] LEDG
+);
     
     parameter [9:0] Ball_X_Center = 10'd320;  // Center position on the X axis
     parameter [9:0] Ball_Y_Center = 10'd240;  // Center position on the Y axis
@@ -48,14 +51,14 @@ module  ball ( input         Clk,                // 50 MHz clock
     //////// Do not modify the always_ff blocks. ////////
     // Detect rising edge of frame_clk
     logic frame_clk_delayed, frame_clk_rising_edge;
-    always_ff @ (posedge Clk) begin
+    always_ff @ (posedge clk) begin
         frame_clk_delayed <= frame_clk;
         frame_clk_rising_edge <= (frame_clk == 1'b1) && (frame_clk_delayed == 1'b0);
     end
     // Update registers
-    always_ff @ (posedge Clk)
+    always_ff @ (posedge clk)
     begin
-        if (Reset)
+        if (reset)
         begin
             Ball_X_Pos <= Ball_X_Center;
             Ball_Y_Pos <= Ball_Y_Center;
@@ -175,8 +178,8 @@ module  ball ( input         Clk,                // 50 MHz clock
     /* Since the multiplicants are required to be signed, we have to first cast them
        from logic to int (signed by default) before they are multiplied. */
     int DistX, DistY, Size;
-    assign DistX = DrawX - Ball_X_Pos;
-    assign DistY = DrawY - Ball_Y_Pos;
+    assign DistX = vga_x - Ball_X_Pos;
+    assign DistY = vga_y - Ball_Y_Pos;
     assign Size = Ball_Size;
     always_comb begin
         if ( ( DistX*DistX + DistY*DistY) <= (Size*Size) ) 

@@ -4,7 +4,7 @@
 // MODULE: altpll 
 
 // ============================================================
-// File Name: vga_clk.v
+// File Name: vga_pll.v
 // Megafunction Name(s):
 // 			altpll
 //
@@ -37,7 +37,7 @@
 // synopsys translate_off
 `timescale 1 ps / 1 ps
 // synopsys translate_on
-module vga_clk (
+module vga_pll (
 	inclk0,
 	c0);
 
@@ -98,7 +98,7 @@ module vga_clk (
 		altpll_component.compensate_clock = "CLK0",
 		altpll_component.inclk0_input_frequency = 20000,
 		altpll_component.intended_device_family = "Cyclone IV E",
-		altpll_component.lpm_hint = "CBX_MODULE_PREFIX=vga_clk",
+		altpll_component.lpm_hint = "CBX_MODULE_PREFIX=vga_pll",
 		altpll_component.lpm_type = "altpll",
 		altpll_component.operation_mode = "NORMAL",
 		altpll_component.pll_type = "AUTO",
@@ -212,7 +212,7 @@ endmodule
 // Retrieval info: PRIVATE: PLL_PFDENA_CHECK STRING "0"
 // Retrieval info: PRIVATE: PLL_TARGET_HARCOPY_CHECK NUMERIC "0"
 // Retrieval info: PRIVATE: PRIMARY_CLK_COMBO STRING "inclk0"
-// Retrieval info: PRIVATE: RECONFIG_FILE STRING "vga_clk.mif"
+// Retrieval info: PRIVATE: RECONFIG_FILE STRING "vga_pll.mif"
 // Retrieval info: PRIVATE: SACN_INPUTS_CHECK STRING "0"
 // Retrieval info: PRIVATE: SCAN_FEATURE_ENABLED STRING "1"
 // Retrieval info: PRIVATE: SELF_RESET_LOCK_LOSS STRING "0"
@@ -291,11 +291,11 @@ endmodule
 // Retrieval info: CONNECT: @inclk 0 0 1 1 GND 0 0 0 0
 // Retrieval info: CONNECT: @inclk 0 0 1 0 inclk0 0 0 0 0
 // Retrieval info: CONNECT: c0 0 0 0 0 @clk 0 0 1 0
-// Retrieval info: GEN_FILE: TYPE_NORMAL vga_clk.v TRUE
-// Retrieval info: GEN_FILE: TYPE_NORMAL vga_clk.ppf TRUE
-// Retrieval info: GEN_FILE: TYPE_NORMAL vga_clk.inc FALSE
-// Retrieval info: GEN_FILE: TYPE_NORMAL vga_clk.cmp FALSE
-// Retrieval info: GEN_FILE: TYPE_NORMAL vga_clk.bsf FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL vga_pll.v TRUE
+// Retrieval info: GEN_FILE: TYPE_NORMAL vga_pll.ppf TRUE
+// Retrieval info: GEN_FILE: TYPE_NORMAL vga_pll.inc FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL vga_pll.cmp FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL vga_pll.bsf FALSE
 // Retrieval info: GEN_FILE: TYPE_NORMAL vga_clk_inst.v FALSE
 // Retrieval info: GEN_FILE: TYPE_NORMAL vga_clk_bb.v FALSE
 // Retrieval info: LIB_FILE: altera_mf

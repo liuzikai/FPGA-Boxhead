@@ -1,5 +1,4 @@
-module  sram_controller (
-    input  logic        clk,         // 50 MHz clock
+module sram_controller (
     input  logic        sram_clk,    // 100 MHz clock
     input  logic        reset,       // Active-high reset signal
 
@@ -13,14 +12,14 @@ module  sram_controller (
 
     input  logic [9:0]  vga_x,
                         vga_y,
-    output logic [16:0] vga_data,
+    output logic [15:0] vga_data,
 
     output logic        SRAM_CE, 
                         SRAM_UB, 
                         SRAM_LB, 
                         SRAM_OE, 
                         SRAM_WE,
-    output logic [15:0] SRAM_ADDR,
+    output logic [19:0] SRAM_ADDR,
     inout  wire  [15:0] SRAM_DQ
 
 );   
@@ -74,29 +73,40 @@ module  sram_controller (
     end
     assign vga_data = vga_data_reg;
     
-    // Calculate offsets
-    logic [15:0] program_offset, vga_offset;
-    assign program_offset = program_y * 640 + program_x;
-    assign vga_offset = vga_y * 640 + vga_x;
+    /*
+       Calculate offsets
+
+       This module needs to run at 100MHz, so we try to avoid expensive calculations like * and even +.
+       We have 20 bits for address, so we encode address as follows:
+
+       {1 bit for alternating frame, 9 bits for Y, 10 bits for X}
+
+       640: 1010000000 (10 bits)
+       480: 111100000 (9 bits)
+    */
+
+    logic [19:0] program_addr, vga_addr;
+    assign program_addr = {~display_frame, program_y, program_x};  // program write to hidden frame
+    assign vga_addr = = {display_frame, vga_y, vga_x};  // vga write to display frame
 
 
     // Control SRAM based on state machine
     always_comb begin
         unique case (stage)
-            STAGE_WRITE_1, STAGE_WRITE_2: begin  // program write, to hidden grame
-                SRAM_ADDR = program_offset + (display_frame ? 0 : 307200);
+            STAGE_WRITE_1, STAGE_WRITE_2: begin  
+                SRAM_ADDR = program_addr;
                 SRAM_DQ = program_data;
                 SRAM_WE = 1'b0;  // active low
                 SRAM_OE = 1'b1;
             end
             STAGE_VGA: begin  // VGA read
-                SRAM_ADDR = vga_offset + (display_frame ? 307200 : 0);
+                SRAM_ADDR = vga_addr;
                 SRAM_DQ = {16{1'bZ}};
                 SRAM_WE = 1'b1;
                 SRAM_OE = 1'b0;  // active low
             end
             STAGE_BG: begin  // background write, to last read VGA pixel
-                SRAM_ADDR = vga_offset + (display_frame ? 0 : 307200);
+                SRAM_ADDR = vga_addr;
                 SRAM_DQ = background_data;
                 SRAM_WE = 1'b0;  // active low
                 SRAM_OE = 1'b1;
