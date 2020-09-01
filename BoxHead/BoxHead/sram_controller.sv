@@ -1,6 +1,6 @@
 module sram_controller (
     input  logic        sram_clk,    // 100 MHz clock
-    input  logic        sram_b_clk,  // 100 MHz clock with at least 65% duty cycle
+    input  logic        sram_b_clk,  // 100 MHz clock with at most 20% duty cycle
     input  logic        reset,       // Active-high reset signal
 
     input  logic        frame_clk,
@@ -80,13 +80,16 @@ module sram_controller (
     */
     logic [19:0] sram_addr_reg;
     logic [15:0] sram_out_reg;
-    logic sram_write_enabled;
+    logic sram_write_enabled, sram_read_enabled;
+    logic [15:0] vga_read_reg;
     always_ff @ (posedge sram_clk) begin
         if (reset) begin
             stage <= STAGE_WRITE_1;
             sram_addr_reg <= 0;
             sram_out_reg <= 0;
             sram_write_enabled <= 0;
+            sram_read_enabled <= 0;
+            vga_read_reg <= 16'h0000;
         end
         else begin
             unique case (stage)
@@ -95,50 +98,49 @@ module sram_controller (
                     sram_addr_reg <= program_addr;
                     sram_out_reg <= program_data;
                     sram_write_enabled <= 1;
+                    sram_read_enabled <= 0;
+                    vga_read_reg <= vga_read_reg;  // keep the value
                 end
                 STAGE_WRITE_1: begin
                     stage <= STAGE_VGA;  // enter VGA read stage
                     sram_addr_reg <= vga_addr;
                     sram_out_reg <= program_data;  // no use
                     sram_write_enabled <= 0;
+                    sram_read_enabled <= 1;
+                    vga_read_reg <= vga_read_reg;  // keep the value
                 end
                 STAGE_VGA: begin
+                    vga_read_reg <= SRAM_DQ;
                     stage <= STAGE_WRITE_2;  // enter program write #2 stage
                     sram_addr_reg <= program_addr;
                     sram_out_reg <= program_data;
                     sram_write_enabled <= 1;
+                    sram_read_enabled <= 0;
                 end
                 STAGE_WRITE_2: begin
                     stage <= STAGE_BG;  // enter background write stage
                     sram_addr_reg <= vga_addr;
                     sram_out_reg <= background_data;
                     sram_write_enabled <= 1;
+                    sram_read_enabled <= 0;
+                    vga_read_reg <= vga_read_reg;  // keep the value
                 end
             endcase
         end
     end
 
+
+
     assign SRAM_CE_N = 1'b0;  // always active (low)
-    assign SRAM_OE_N = 1'b0;  // always active (low), doesn't affect Write
+    assign SRAM_UB_N = 1'b0;  // always active (low)
+    assign SRAM_LB_N = 1'b0;  // always active (low)
 
-    // We use sram_b_clk to trigger Write, which doesn't affect Read
-    assign SRAM_UB_N = ~sram_b_clk;
-    assign SRAM_LB_N = ~sram_b_clk;
-
-    assign SRAM_WE_N = ~sram_write_enabled;
+    assign SRAM_OE_N = ~sram_read_enabled; 
+    assign SRAM_WE_N = sram_write_enabled ? sram_b_clk : 1'b1;
 
     assign SRAM_ADDR = sram_addr_reg;
     assign SRAM_DQ = sram_write_enabled ? sram_out_reg : {16{1'bZ}};
 
-    // VGA read data register, update at VGA stage
-    logic [15:0] vga_read_reg;
-    always_ff @ (negedge sram_clk) begin
-        if (reset) vga_read_reg <= 16'h0000;
-        else begin
-            if (stage == STAGE_VGA) vga_read_reg <= SRAM_DQ;  // load the value at the beginning of third stage (stage has not changed yet)
-            else vga_read_reg <= vga_read_reg;  // keep the value
-        end
-    end
     assign vga_data = vga_read_reg;
 	 
 	 always_comb begin
