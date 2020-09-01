@@ -61,6 +61,13 @@ module sram_controller_unit_test (
         .c0(sram_clk)
     );
 
+    // Setup SRAM clock for UB and LB signals
+    logic sram_b_clk;
+    sram_b_pll sram_b_pll (
+        .inclk0(clk), 
+        .c0(sram_b_clk)
+    );
+
     // TEST: fixed program coordinates and data
     logic [9:0] program_x, program_y;
     logic [15:0] program_data, background_data;
