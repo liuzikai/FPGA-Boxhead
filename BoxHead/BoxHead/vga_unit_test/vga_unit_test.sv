@@ -30,6 +30,7 @@ module vga_unit_test (
         .inclk0(clk), 
         .c0(vga_clk)
     );
+	 assign VGA_CLK = vga_clk;
 
     // Setup VGA controller
     logic [9:0] vga_x, vga_y;

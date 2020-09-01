@@ -15,13 +15,15 @@ module sram_controller (
                         vga_y,
     output logic [15:0] vga_data,
 
-    output logic        SRAM_CE, 
-                        SRAM_UB, 
-                        SRAM_LB, 
-                        SRAM_OE, 
-                        SRAM_WE,
+    output logic        SRAM_CE_N, 
+                        SRAM_UB_N, 
+                        SRAM_LB_N, 
+                        SRAM_OE_N, 
+                        SRAM_WE_N,
     output logic [19:0] SRAM_ADDR,
-    inout  wire  [15:0] SRAM_DQ
+    inout  wire  [15:0] SRAM_DQ,
+	 
+	 output logic [7:0]  LEDG
 
 );   
 
@@ -116,21 +118,21 @@ module sram_controller (
         end
     end
 
-    assign SRAM_CE = 1'b0;  // always active (low)
-    assign SRAM_OE = 1'b0;  // always active (low), doesn't affect Write
+    assign SRAM_CE_N = 1'b0;  // always active (low)
+    assign SRAM_OE_N = 1'b0;  // always active (low), doesn't affect Write
 
     // We use sram_b_clk to trigger Write, which doesn't affect Read
-	assign SRAM_UB = ~sram_b_clk;
-    assign SRAM_LB = ~sram_b_clk;
+    assign SRAM_UB_N = ~sram_b_clk;
+    assign SRAM_LB_N = ~sram_b_clk;
 
-    assign SRAM_WE = ~write_enabled;
+    assign SRAM_WE_N = ~sram_write_enabled;
 
     assign SRAM_ADDR = sram_addr_reg;
-    assign SRAM_DQ = write_enabled ? sram_out_reg : {N{1'bZ}};
+    assign SRAM_DQ = sram_write_enabled ? sram_out_reg : {16{1'bZ}};
 
     // VGA read data register, update at VGA stage
     logic [15:0] vga_read_reg;
-    always_ff @ (posedge sram_clk) begin
+    always_ff @ (negedge sram_clk) begin
         if (reset) vga_read_reg <= 16'h0000;
         else begin
             if (stage == STAGE_VGA) vga_read_reg <= SRAM_DQ;  // load the value at the beginning of third stage (stage has not changed yet)
@@ -138,5 +140,15 @@ module sram_controller (
         end
     end
     assign vga_data = vga_read_reg;
+	 
+	 always_comb begin
+	     LEDG = 8'h00;
+		  unique case (stage)
+            STAGE_BG: LEDG[0] = 1;
+            STAGE_WRITE_1: LEDG[1] = 1;
+            STAGE_VGA: LEDG[2] = 1;
+            STAGE_WRITE_2: LEDG[3] = 1;
+        endcase
+	 end
 
 endmodule
