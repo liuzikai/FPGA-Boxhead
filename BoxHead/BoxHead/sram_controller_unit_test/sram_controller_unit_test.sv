@@ -18,7 +18,7 @@ module sram_controller_unit_test (
                         VGA_BLANK_N,  // VGA Blank signal
                         VGA_VS,       // VGA virtical sync signal
                         VGA_HS,       // VGA horizontal sync signal
-	output logic [7:0]   LEDG
+	output logic [7:0]  LEDG
 );
 
     // ================================ Common ================================
@@ -72,7 +72,7 @@ module sram_controller_unit_test (
 
     // Setup SRAM clock
     logic sram_clk;
-	 logic sram_b_clk;
+    logic sram_b_clk;
     sram_pll sram_pll (
         .inclk0(clk), 
         .c0(sram_clk),
