@@ -694,16 +694,6 @@ set_global_assignment -name CYCLONEIII_CONFIGURATION_DEVICE EPCS64
 
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
-set_global_assignment -name SYSTEMVERILOG_FILE vga_controller.sv
-set_global_assignment -name QIP_FILE vga_pll.qip
-set_global_assignment -name SYSTEMVERILOG_FILE vga_color_extend.sv
-set_global_assignment -name SYSTEMVERILOG_FILE vga_unit_test/ball.sv
-set_global_assignment -name SYSTEMVERILOG_FILE vga_unit_test/vga_unit_test.sv
-set_global_assignment -name SDC_FILE BoxHead.sdc
-set_global_assignment -name SYSTEMVERILOG_FILE sram_controller_unit_test/sram_controller_single_toplevel.sv
-set_global_assignment -name SYSTEMVERILOG_FILE sram_controller.sv
-set_global_assignment -name QIP_FILE sram_pll.qip
-set_global_assignment -name QIP_FILE sram_b_pll.qip
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to CLOCK_50
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to CLOCK2_50
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to CLOCK3_50
@@ -1239,10 +1229,19 @@ set_instance_assignment -name IO_MAXIMUM_TOGGLE_RATE "0 MHz" -to HEX3[0]
 set_instance_assignment -name FAST_INPUT_REGISTER ON -to *
 set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to *
 set_instance_assignment -name TSU_REQUIREMENT "10 ns" -from * -to *
-set_global_assignment -name SYSTEMVERILOG_FILE sram_controller_unit_test/sram_controller_unit_test.sv
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_global_assignment -name LL_ROOT_REGION ON -section_id "Root Region"
 set_global_assignment -name LL_MEMBER_STATE LOCKED -section_id "Root Region"
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name QIP_FILE sram_pll.qip
+set_global_assignment -name SYSTEMVERILOG_FILE vga_controller.sv
+set_global_assignment -name QIP_FILE vga_pll.qip
+set_global_assignment -name SYSTEMVERILOG_FILE vga_color_extend.sv
+set_global_assignment -name SYSTEMVERILOG_FILE vga_unit_test/ball.sv
+set_global_assignment -name SYSTEMVERILOG_FILE vga_unit_test/vga_unit_test.sv
+set_global_assignment -name SDC_FILE BoxHead.sdc
+set_global_assignment -name SYSTEMVERILOG_FILE sram_controller_unit_test/sram_controller_single_toplevel.sv
+set_global_assignment -name SYSTEMVERILOG_FILE sram_controller.sv
+set_global_assignment -name SYSTEMVERILOG_FILE sram_controller_unit_test/sram_controller_unit_test.sv
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

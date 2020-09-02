@@ -135,7 +135,7 @@ module sram_controller (
     assign SRAM_UB_N = 1'b0;  // always active (low)
     assign SRAM_LB_N = 1'b0;  // always active (low)
 
-    assign SRAM_OE_N = ~sram_read_enabled; 
+    assign SRAM_OE_N = sram_read_enabled ? sram_b_clk : 1'b1; 
     assign SRAM_WE_N = sram_write_enabled ? sram_b_clk : 1'b1;
 
     assign SRAM_ADDR = sram_addr_reg;
