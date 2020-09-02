@@ -99,7 +99,7 @@ module sram_pll (
 		altpll_component.clk0_multiply_by = 2,
 		altpll_component.clk0_phase_shift = "0",
 		altpll_component.clk1_divide_by = 1,
-		altpll_component.clk1_duty_cycle = 20,
+		altpll_component.clk1_duty_cycle = 80,
 		altpll_component.clk1_multiply_by = 2,
 		altpll_component.clk1_phase_shift = "0",
 		altpll_component.compensate_clock = "CLK0",
@@ -177,7 +177,7 @@ endmodule
 // Retrieval info: PRIVATE: DIV_FACTOR0 NUMERIC "1"
 // Retrieval info: PRIVATE: DIV_FACTOR1 NUMERIC "1"
 // Retrieval info: PRIVATE: DUTY_CYCLE0 STRING "50.00000000"
-// Retrieval info: PRIVATE: DUTY_CYCLE1 STRING "20.00000000"
+// Retrieval info: PRIVATE: DUTY_CYCLE1 STRING "80.00000000"
 // Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE0 STRING "100.000000"
 // Retrieval info: PRIVATE: EFF_OUTPUT_FREQ_VALUE1 STRING "100.000000"
 // Retrieval info: PRIVATE: EXPLICIT_SWITCHOVER_COUNTER STRING "0"
@@ -259,7 +259,7 @@ endmodule
 // Retrieval info: CONSTANT: CLK0_MULTIPLY_BY NUMERIC "2"
 // Retrieval info: CONSTANT: CLK0_PHASE_SHIFT STRING "0"
 // Retrieval info: CONSTANT: CLK1_DIVIDE_BY NUMERIC "1"
-// Retrieval info: CONSTANT: CLK1_DUTY_CYCLE NUMERIC "20"
+// Retrieval info: CONSTANT: CLK1_DUTY_CYCLE NUMERIC "80"
 // Retrieval info: CONSTANT: CLK1_MULTIPLY_BY NUMERIC "2"
 // Retrieval info: CONSTANT: CLK1_PHASE_SHIFT STRING "0"
 // Retrieval info: CONSTANT: COMPENSATE_CLOCK STRING "CLK0"

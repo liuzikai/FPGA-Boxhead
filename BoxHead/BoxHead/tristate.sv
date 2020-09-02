@@ -21,18 +21,21 @@ module tristate #(N = 16) (
 	inout wire [N-1:0] data          // inout bus to SRAM
 );
 
-// Registers are needed between synchronized circuit and asynchronized SRAM 
-logic [N-1:0] data_read_buffer;
+	// Registers are needed between synchronized circuit and asynchronized SRAM 
+	logic [N-1:0] data_write_buffer, data_read_buffer;
 
-always_ff @(posedge clk)
-begin
-	// Always read data from the bus
-	data_read_buffer <= data;
-end
+	always_ff @(posedge clk)
+	begin
+		// Always read data from the bus
+		data_read_buffer <= data;
+		
+		// Always updated with the data from Mem2IO which will be written to the bus
+		data_write_buffer <= data_write;
+	end
 
-// Drive (write to) data bus only when write_enabled is active.
-assign data = write_enabled ? data_write : {N{1'bZ}};
+	// Drive (write to) data bus only when write_enabled is active.
+	assign data = write_enabled ? data_write_buffer : {N{1'bZ}};
 
-assign data_read = data_read_buffer;
+	assign data_read = data_read_buffer;
 
 endmodule

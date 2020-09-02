@@ -79,15 +79,15 @@ module sram_controller (
         The least address setup and data hold time can be 0, so all can be performed at posedge.
     */
     logic [19:0] sram_addr_reg;
-    logic [15:0] sram_out_reg;
     logic sram_write_enabled, sram_read_enabled;
+	 logic [15:0] sram_out_wire;
     logic [15:0] sram_read_wire;
     logic [15:0] vga_read_reg;
 
-    tristate tristate #(.N(16)) (
+    tristate #(.N(16)) tristate (
         .clk(sram_clk),
         .write_enabled(sram_write_enabled),
-        .data_write(sram_out_reg),
+        .data_write(sram_out_wire),
         .data_read(sram_read_wire),
         .data(SRAM_DQ)
     );
@@ -96,7 +96,6 @@ module sram_controller (
         if (reset) begin
             stage <= STAGE_WRITE_1;
             sram_addr_reg <= 0;
-            sram_out_reg <= 0;
             sram_write_enabled <= 0;
             sram_read_enabled <= 0;
             vga_read_reg <= 16'h0000;
@@ -106,7 +105,6 @@ module sram_controller (
                 STAGE_BG: begin
                     stage <= STAGE_WRITE_1;  // enter program write #1 stage
                     sram_addr_reg <= program_addr;
-                    sram_out_reg <= program_data;
                     sram_write_enabled <= 1;
                     sram_read_enabled <= 0;
                     vga_read_reg <= vga_read_reg;  // keep the value
@@ -114,7 +112,6 @@ module sram_controller (
                 STAGE_WRITE_1: begin
                     stage <= STAGE_VGA;  // enter VGA read stage
                     sram_addr_reg <= vga_addr;
-                    sram_out_reg <= 16'b0000011111100000;  // no use
                     sram_write_enabled <= 0;
                     sram_read_enabled <= 1;
                     vga_read_reg <= vga_read_reg;  // keep the value
@@ -122,7 +119,6 @@ module sram_controller (
                 STAGE_VGA: begin
                     stage <= STAGE_WRITE_2;  // enter program write #2 stage
                     sram_addr_reg <= program_addr;
-                    sram_out_reg <= program_data;
                     sram_write_enabled <= 1;
                     sram_read_enabled <= 0;
                     vga_read_reg <= vga_read_reg;  // keep the value
@@ -131,7 +127,6 @@ module sram_controller (
                     vga_read_reg <= sram_read_wire;
                     stage <= STAGE_BG;  // enter background write stage
                     sram_addr_reg <= vga_addr;
-                    sram_out_reg <= background_data;
                     sram_write_enabled <= 1;
                     sram_read_enabled <= 0;
                     
@@ -144,8 +139,8 @@ module sram_controller (
     assign SRAM_UB_N = 1'b0;  // always active (low)
     assign SRAM_LB_N = 1'b0;  // always active (low)
 
-    assign SRAM_OE_N = sram_read_enabled ? sram_b_clk : 1'b1; 
-    assign SRAM_WE_N = sram_write_enabled ? sram_b_clk : 1'b1;
+    assign SRAM_OE_N = sram_read_enabled ? ~sram_b_clk : 1'b1; 
+    assign SRAM_WE_N = sram_write_enabled ? ~sram_b_clk : 1'b1;
 
     assign SRAM_ADDR = sram_addr_reg;
 
@@ -154,10 +149,10 @@ module sram_controller (
 	 always_comb begin
 	     LEDG = 8'h00;
 		  unique case (stage)
-            STAGE_BG: LEDG[0] = 1;
-            STAGE_WRITE_1: LEDG[1] = 1;
-            STAGE_VGA: LEDG[2] = 1;
-            STAGE_WRITE_2: LEDG[3] = 1;
+            STAGE_WRITE_1: sram_out_wire = 16'b0000011111100000;
+            STAGE_VGA: sram_out_wire = program_data;
+            STAGE_WRITE_2: sram_out_wire = background_data;
+				STAGE_BG: sram_out_wire = program_data;
         endcase
 	 end
 
