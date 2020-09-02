@@ -105,7 +105,7 @@ module sram_pll (
 		altpll_component.clk1_divide_by = 1,
 		altpll_component.clk1_duty_cycle = 27,
 		altpll_component.clk1_multiply_by = 2,
-		altpll_component.clk1_phase_shift = "-2143",
+		altpll_component.clk1_phase_shift = "-2292",
 		altpll_component.clk2_divide_by = 2,
 		altpll_component.clk2_duty_cycle = 50,
 		altpll_component.clk2_multiply_by = 1,
@@ -233,12 +233,12 @@ endmodule
 // Retrieval info: PRIVATE: PHASE_RECONFIG_FEATURE_ENABLED STRING "1"
 // Retrieval info: PRIVATE: PHASE_RECONFIG_INPUTS_CHECK STRING "0"
 // Retrieval info: PRIVATE: PHASE_SHIFT0 STRING "0.00000000"
-// Retrieval info: PRIVATE: PHASE_SHIFT1 STRING "-2.14285700"
+// Retrieval info: PRIVATE: PHASE_SHIFT1 STRING "-2.29166700"
 // Retrieval info: PRIVATE: PHASE_SHIFT2 STRING "0.00000000"
 // Retrieval info: PRIVATE: PHASE_SHIFT_STEP_ENABLED_CHECK STRING "0"
 // Retrieval info: PRIVATE: PHASE_SHIFT_UNIT0 STRING "deg"
 // Retrieval info: PRIVATE: PHASE_SHIFT_UNIT1 STRING "ns"
-// Retrieval info: PRIVATE: PHASE_SHIFT_UNIT2 STRING "ps"
+// Retrieval info: PRIVATE: PHASE_SHIFT_UNIT2 STRING "ns"
 // Retrieval info: PRIVATE: PLL_ADVANCED_PARAM_CHECK STRING "0"
 // Retrieval info: PRIVATE: PLL_ARESET_CHECK STRING "0"
 // Retrieval info: PRIVATE: PLL_AUTOPLL_CHECK NUMERIC "1"
@@ -283,7 +283,7 @@ endmodule
 // Retrieval info: CONSTANT: CLK1_DIVIDE_BY NUMERIC "1"
 // Retrieval info: CONSTANT: CLK1_DUTY_CYCLE NUMERIC "27"
 // Retrieval info: CONSTANT: CLK1_MULTIPLY_BY NUMERIC "2"
-// Retrieval info: CONSTANT: CLK1_PHASE_SHIFT STRING "-2143"
+// Retrieval info: CONSTANT: CLK1_PHASE_SHIFT STRING "-2292"
 // Retrieval info: CONSTANT: CLK2_DIVIDE_BY NUMERIC "2"
 // Retrieval info: CONSTANT: CLK2_DUTY_CYCLE NUMERIC "50"
 // Retrieval info: CONSTANT: CLK2_MULTIPLY_BY NUMERIC "1"
