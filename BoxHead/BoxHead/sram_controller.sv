@@ -23,7 +23,7 @@ module sram_controller (
     output logic [19:0] SRAM_ADDR,
     inout  wire  [15:0] SRAM_DQ,
 	 
-	 output logic [7:0]  LEDG
+	output logic [7:0]  LEDG
 
 );   
 
@@ -104,7 +104,7 @@ module sram_controller (
                 STAGE_WRITE_1: begin
                     stage <= STAGE_VGA;  // enter VGA read stage
                     sram_addr_reg <= vga_addr;
-                    sram_out_reg <= program_data;  // no use
+                    sram_out_reg <= 16'b0000011111100000;  // no use
                     sram_write_enabled <= 0;
                     sram_read_enabled <= 1;
                     vga_read_reg <= vga_read_reg;  // keep the value

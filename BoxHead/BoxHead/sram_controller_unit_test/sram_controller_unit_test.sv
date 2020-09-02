@@ -41,18 +41,32 @@ module sram_controller_unit_test (
         .inclk0(clk), 
         .c0(vga_clk)
     );
-	 assign VGA_CLK = vga_clk;
+	assign VGA_CLK = vga_clk;
 
     // Setup VGA controller
     logic [9:0] vga_x, vga_y;
-    vga_controller vga_controller (.*);
+    vga_controller vga_controller (
+        .vga_clk(vga_clk),
+        .reset(reset),
+        .vga_x(vga_x),
+        .vga_y(vga_y),
+        .VGA_HS(VGA_HS),
+        .VGA_VS(VGA_VS),
+        .VGA_BLANK_N(VGA_BLANK_N),
+        .VGA_SYNC_N(VGA_SYNC_N)
+    );
 
     logic frame_clk;
     assign frame_clk = ~VGA_VS;
 
     // Setup color extend
     logic [15:0] vga_data;
-    vga_color_extend vga_color_extend (.*);
+    vga_color_extend vga_color_extend (
+        .vga_data(vga_data),
+        .VGA_R(VGA_R),
+        .VGA_G(VGA_G),
+        .VGA_B(VGA_B)
+    );
 
     // ================================ SRAM ================================
 
@@ -62,19 +76,31 @@ module sram_controller_unit_test (
     sram_pll sram_pll (
         .inclk0(clk), 
         .c0(sram_clk),
-		  .c1(sram_b_clk)
+		.c1(sram_b_clk)
     );
 
-    // TEST: fixed program coordinates and data
-    logic [9:0] program_x, program_y;
-    logic [15:0] program_data, background_data;
-    assign program_x = 100;
-    assign program_y = 200;
-    assign program_data = 16'b0000000000000000;
-    assign background_data = 16'b000000000011111;
-
     // SRAM controller
-    sram_controller sram_controller (.*);
+    sram_controller sram_controller (
+        .sram_clk(sram_clk),
+        .sram_b_clk(sram_b_clk),
+        .reset(reset),
+        .frame_clk(frame_clk),
+        .program_x(10'b0000000000),
+        .program_y(10'b0000000000),
+        .program_data(16'b0000000000000000),
+        .background_data(16'b000000000011111),
+        .vga_x(vga_x),
+        .vga_y(vga_y),
+        .vga_data(vga_data),
+        .SRAM_CE_N(SRAM_CE_N),
+        .SRAM_UB_N(SRAM_UB_N),
+        .SRAM_LB_N(SRAM_LB_N),
+        .SRAM_OE_N(SRAM_OE_N),
+        .SRAM_WE_N(SRAM_WE_N),
+        .SRAM_ADDR(SRAM_ADDR),
+        .SRAM_DQ(SRAM_DQ),
+        .LEDG(LEDG)
+    );
 
 
 endmodule
