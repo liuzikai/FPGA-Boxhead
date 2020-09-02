@@ -14,6 +14,8 @@ module sram_controller (
     input  logic [9:0]  vga_x,
                         vga_y,
     output logic [15:0] vga_data,
+	 
+	 input  logic        VGA_BLANK_N,
 
     output logic        SRAM_CE_N, 
                         SRAM_UB_N, 
@@ -104,7 +106,7 @@ module sram_controller (
                 STAGE_WRITE_1: begin
                     stage <= STAGE_VGA;  // enter VGA read stage
                     sram_addr_reg <= vga_addr;
-                    sram_out_reg <= program_data;  // no use
+                    sram_out_reg <= 16'b0000011111100000;  // no use
                     sram_write_enabled <= 0;
                     sram_read_enabled <= 1;
                     vga_read_reg <= vga_read_reg;  // keep the value
@@ -121,7 +123,7 @@ module sram_controller (
                     stage <= STAGE_BG;  // enter background write stage
                     sram_addr_reg <= vga_addr;
                     sram_out_reg <= background_data;
-                    sram_write_enabled <= 1;
+                    sram_write_enabled <= VGA_BLANK_N;
                     sram_read_enabled <= 0;
                     vga_read_reg <= vga_read_reg;  // keep the value
                 end
@@ -138,11 +140,7 @@ module sram_controller (
     assign vga_data = vga_read_reg;
      
      always_comb begin
-        if (sram_read_enabled) begin
-            SRAM_OE_N = sram_b_clk;
-        end else begin
-            SRAM_OE_N = 1'b1;
-        end
+        SRAM_OE_N = ~sram_read_enabled;
 
         if (sram_write_enabled) begin
             SRAM_WE_N = sram_b_clk;
