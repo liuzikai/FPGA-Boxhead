@@ -66,15 +66,14 @@ module sram_controller (
     typedef enum logic [1:0] {  // 8-bit opcodes
         STAGE_WRITE_1 = 2'b00,  // program write #1
         STAGE_VGA     = 2'b01,  // VGA read 
-        STAGE_WRITE_2 = 2'b10,  // program write #2
-        STAGE_BG      = 2'b11   // background write
+        STAGE_WRITE_2 = 2'b11,  // program write #2
+        STAGE_BG      = 2'b10   // background write
     } stage_e;
     stage_e stage, stage_in;
 
     always_ff @ (posedge sram_clk) begin
-        // if (reset) stage <= STAGE_VGA;
-        // else 
-        stage <= stage_in;
+        if (reset) stage <= STAGE_VGA;
+        else stage <= stage_in;
     end
 
     always_comb begin
@@ -102,21 +101,25 @@ module sram_controller (
         unique case (stage)
             STAGE_BG: begin
                 // Enter Write #1 stage
+                sram_out_reg <= program_data;
                 sram_write_enabled <= program_write;
                 sram_read_enabled <= 0;
             end
             STAGE_WRITE_1: begin 
                 // Enter the VGA Read stage
+                sram_out_reg <= 16'b0000011111100000;  // this color should never shows
                 sram_write_enabled <= 0;
                 sram_read_enabled <= 1;
             end
             STAGE_VGA: begin
                 // Enter program write #2 stage
+                sram_out_reg <= program_data;
                 sram_write_enabled <= program_write;
                 sram_read_enabled <= 0;
             end
             STAGE_WRITE_2: begin
                 // Enter the background Write stage
+                sram_out_reg <= background_data;
                 sram_write_enabled <= VGA_BLANK_N;
                 sram_read_enabled <= 0;
             end
@@ -129,22 +132,18 @@ module sram_controller (
             STAGE_BG: begin
                 // Ready for Program Write #1
                 sram_addr_reg <= program_addr;
-                sram_out_reg <= program_data;
             end
             STAGE_WRITE_1: begin
                 // Ready for VGA Read
                 sram_addr_reg <= vga_addr;
-                sram_out_reg <= 16'b0000011111100000;  // this color should never shows
             end
             STAGE_VGA: begin
                 // Ready for Program Write #2
                 sram_addr_reg <= program_addr;
-                sram_out_reg <= program_data;
             end
             STAGE_WRITE_2: begin
                 // Ready for Background Write
                 sram_addr_reg <= vga_addr;
-                sram_out_reg <= background_data;
             end
             
         endcase

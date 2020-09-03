@@ -67,10 +67,10 @@ module copy_engine_unit_test (
     logic copy_engine_status;
 
     copy_engine #(SrcAddrWidth) copy_engine (
-        .dest_x_start(270),
-        .dest_x_end(370),
-        .dest_y_start(190),
-        .dest_y_end(290),
+        .dest_x_start(470),
+        .dest_x_end(570),
+        .dest_y_start(290),
+        .dest_y_end(390),
         .src_addr_start(0),
         .execute(copy_engine_execute),
         .status(copy_engine_status),
@@ -95,7 +95,7 @@ module copy_engine_unit_test (
 
     // SRAM controller
     sram_controller sram_controller (
-        .background_data(16'b0000000000011111),
+        .background_data(16'b0000000000000000),
         .*
     );
 
