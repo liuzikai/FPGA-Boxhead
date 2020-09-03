@@ -14,8 +14,8 @@ module sram_controller (
     input  logic [9:0]  vga_x,
                         vga_y,
     output logic [15:0] vga_data,
-	 
-	 input  logic        VGA_BLANK_N,
+     
+    input  logic        VGA_BLANK_N,
 
     output logic        SRAM_CE_N, 
                         SRAM_UB_N, 
@@ -23,10 +23,7 @@ module sram_controller (
                         SRAM_OE_N, 
                         SRAM_WE_N,
     output logic [19:0] SRAM_ADDR,
-    inout  wire  [15:0] SRAM_DQ,
-     
-     output logic [7:0]  LEDG
-
+    inout  wire  [15:0] SRAM_DQ
 );   
 
     // FF to help detect frame switch
@@ -84,59 +81,69 @@ module sram_controller (
     logic [15:0] sram_out_reg;
     logic sram_write_enabled, sram_read_enabled;
     logic [15:0] vga_read_reg;
+
     always_ff @ (posedge sram_clk) begin
-			unique case (stage)
-				 STAGE_WRITE_1: begin
-					  stage <= STAGE_WRITE_2;  // enter program write #2 stage
-					//   sram_addr_reg <= program_addr;
-					  sram_out_reg <= program_data;
-					  sram_write_enabled <= 1;
-					  sram_read_enabled <= 0;
-					  vga_read_reg <= vga_read_reg;  // keep the value
-				 end
-				 STAGE_WRITE_2: begin
-					  stage <= STAGE_VGA;  // enter VGA read stage
-					//   sram_addr_reg <= vga_addr;
-					  sram_out_reg <= 16'b0000011111100000;  // no use
-					  sram_write_enabled <= 0;
-					  sram_read_enabled <= 1;
-					  vga_read_reg <= vga_read_reg;  // keep the value
-					  
-				 end
-				 STAGE_VGA: begin
-					  vga_read_reg <= SRAM_DQ;
-					  stage <= STAGE_BG;  // enter background write stage
-					//   sram_addr_reg <= vga_addr;
-					  sram_out_reg <= background_data;
-					  sram_write_enabled <= VGA_BLANK_N;
-					  sram_read_enabled <= 0;
-				 end
-				 STAGE_BG: begin
-					  stage <= STAGE_WRITE_1;  // enter program write #1 stage
-					//   sram_addr_reg <= program_addr;
-					  sram_out_reg <= program_data;
-					  sram_write_enabled <= 1;
-					  sram_read_enabled <= 0;
-					  vga_read_reg <= vga_read_reg;  // keep the value
-				 end
-			endcase
+        unique case (stage)
+            STAGE_BG: begin
+                stage <= STAGE_WRITE_1;  
+                // Enter Write #1 stage
+                sram_out_reg <= program_data;
+                sram_write_enabled <= 1;
+                sram_read_enabled <= 0;
+            end
+            STAGE_WRITE_1: begin
+                stage <= STAGE_VGA;  
+                // Enter the VGA Read stage
+                sram_out_reg <= 16'b0000011111100000;  // this color should never shows
+                sram_write_enabled <= 0;
+                sram_read_enabled <= 1;
+            end
+            STAGE_VGA: begin
+                stage <= STAGE_WRITE_2;  
+                // Enter program write #2 stage
+                sram_out_reg <= program_data;
+                sram_write_enabled <= 1;
+                sram_read_enabled <= 0;
+            end
+            STAGE_WRITE_2: begin
+                stage <= STAGE_BG;  
+                // Enter the background Write stage
+                sram_out_reg <= background_data;
+                sram_write_enabled <= VGA_BLANK_N;
+                sram_read_enabled <= 0;
+            end
+            
+                
+        endcase
     end
 
+    // Launch SRAM addr in advance
     always_ff @ (posedge sram_b_clk) begin
         unique case (stage)
-             STAGE_WRITE_1: begin
-                  sram_addr_reg <= program_addr;
-             end
-             STAGE_WRITE_2: begin
-                  sram_addr_reg <= vga_addr;
-             end
-             STAGE_VGA: begin
-                  sram_addr_reg <= vga_addr;
-             end
-             STAGE_BG: begin
-                  sram_addr_reg <= program_addr;
-             end
+            STAGE_BG: begin
+                // Ready for Program Write #1
+                sram_addr_reg <= program_addr;
+            end
+            STAGE_WRITE_1: begin
+                // Ready for VGA Read
+                sram_addr_reg <= vga_addr;
+            end
+            STAGE_VGA: begin
+                // Ready for Program Write #2
+                sram_addr_reg <= program_addr;
+            end
+            STAGE_WRITE_2: begin
+                // Ready for Background Write
+                sram_addr_reg <= vga_addr;
+            end
+            
         endcase
+    end
+
+    // Fetch VGA Read data when proper
+    always_ff @ (posedge sram_clk) begin
+        if (stage == STAGE_VGA) vga_read_reg <= SRAM_DQ;
+        else vga_read_reg <= vga_read_reg;
     end
 
     assign SRAM_CE_N = 1'b0;  // always active (low)
