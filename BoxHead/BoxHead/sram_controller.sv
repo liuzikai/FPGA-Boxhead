@@ -1,6 +1,6 @@
 module sram_controller (
     input  logic        sram_clk,    // 100 MHz clock
-    input  logic        sram_b_clk,  // 100 MHz clock with at most 20% duty cycle
+    input  logic        sram_b_clk,  // 100 MHz clock with 25% duty cycle and -2.5ns offset
     input  logic        reset,       // Active-high reset signal
 
     input  logic        frame_clk,
@@ -8,12 +8,13 @@ module sram_controller (
     input  logic [9:0]  program_x,
                         program_y,
     input  logic [15:0] program_data,
-
-    input  logic [15:0] background_data,
+    input  logic        program_write,
 
     input  logic [9:0]  vga_x,
                         vga_y,
     output logic [15:0] vga_data,
+
+    input  logic [15:0] background_data,
      
     input  logic        VGA_BLANK_N,
 
@@ -68,7 +69,22 @@ module sram_controller (
         STAGE_WRITE_2 = 2'b10,  // program write #2
         STAGE_BG      = 2'b11   // background write
     } stage_e;
-    stage_e stage;
+    stage_e stage, stage_in;
+
+    always_ff @ (posedge sram_clk) begin
+        // if (reset) stage <= STAGE_VGA;
+        // else 
+        stage <= stage_in;
+    end
+
+    always_comb begin
+        unique case (stage)
+            STAGE_BG:      stage_in = STAGE_WRITE_1;  
+            STAGE_WRITE_1: stage_in = STAGE_VGA;  
+            STAGE_VGA:     stage_in = STAGE_WRITE_2;  
+            STAGE_WRITE_2: stage_in = STAGE_BG;  
+        endcase
+    end
 
     /*
         Control SRAM based on state machine
@@ -85,35 +101,25 @@ module sram_controller (
     always_ff @ (posedge sram_clk) begin
         unique case (stage)
             STAGE_BG: begin
-                stage <= STAGE_WRITE_1;  
                 // Enter Write #1 stage
-                sram_out_reg <= program_data;
-                sram_write_enabled <= 1;
+                sram_write_enabled <= program_write;
                 sram_read_enabled <= 0;
             end
-            STAGE_WRITE_1: begin
-                stage <= STAGE_VGA;  
+            STAGE_WRITE_1: begin 
                 // Enter the VGA Read stage
-                sram_out_reg <= 16'b0000011111100000;  // this color should never shows
                 sram_write_enabled <= 0;
                 sram_read_enabled <= 1;
             end
             STAGE_VGA: begin
-                stage <= STAGE_WRITE_2;  
                 // Enter program write #2 stage
-                sram_out_reg <= program_data;
-                sram_write_enabled <= 1;
+                sram_write_enabled <= program_write;
                 sram_read_enabled <= 0;
             end
             STAGE_WRITE_2: begin
-                stage <= STAGE_BG;  
                 // Enter the background Write stage
-                sram_out_reg <= background_data;
                 sram_write_enabled <= VGA_BLANK_N;
                 sram_read_enabled <= 0;
             end
-            
-                
         endcase
     end
 
@@ -123,18 +129,22 @@ module sram_controller (
             STAGE_BG: begin
                 // Ready for Program Write #1
                 sram_addr_reg <= program_addr;
+                sram_out_reg <= program_data;
             end
             STAGE_WRITE_1: begin
                 // Ready for VGA Read
                 sram_addr_reg <= vga_addr;
+                sram_out_reg <= 16'b0000011111100000;  // this color should never shows
             end
             STAGE_VGA: begin
                 // Ready for Program Write #2
                 sram_addr_reg <= program_addr;
+                sram_out_reg <= program_data;
             end
             STAGE_WRITE_2: begin
                 // Ready for Background Write
                 sram_addr_reg <= vga_addr;
+                sram_out_reg <= background_data;
             end
             
         endcase

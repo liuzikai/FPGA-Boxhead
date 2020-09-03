@@ -36,33 +36,19 @@ module sram_controller_unit_test (
     // ================================ VGA ================================
 
     // Setup VGA clock
-    logic vga_clk;
+    logic VGA_CLK;
 	
 
     // Setup VGA controller
     logic [9:0] vga_x, vga_y;
-    vga_controller vga_controller (
-        .vga_clk(vga_clk),
-        .reset(reset),
-        .vga_x(vga_x),
-        .vga_y(vga_y),
-        .VGA_HS(VGA_HS),
-        .VGA_VS(VGA_VS),
-        .VGA_BLANK_N(VGA_BLANK_N),
-        .VGA_SYNC_N(VGA_SYNC_N)
-    );
+    vga_controller vga_controller (.*);
 
     logic frame_clk;
     assign frame_clk = ~VGA_VS;
 
     // Setup color extend
     logic [15:0] vga_data;
-    vga_color_extend vga_color_extend (
-        .vga_data(vga_data),
-        .VGA_R(VGA_R),
-        .VGA_G(VGA_G),
-        .VGA_B(VGA_B)
-    );
+    vga_color_extend vga_color_extend (.*);
 
     // ================================ SRAM ================================
 
@@ -73,9 +59,9 @@ module sram_controller_unit_test (
         .inclk0(clk), 
         .c0(sram_clk),
 		.c1(sram_b_clk),
-		.c2(vga_clk)
+		.c2(VGA_CLK)
     );
-	 assign VGA_CLK = vga_clk;
+	 assign VGA_CLK = VGA_CLK;
 
     // SRAM controller
     sram_controller sram_controller (
@@ -86,6 +72,7 @@ module sram_controller_unit_test (
         .program_x({4'b0010, vga_x[5:0]}),
         .program_y({4'b0010, vga_y[5:0]}),
         .program_data(16'b1111100000000000),
+        .program_write(1'b1),
         .background_data(16'b0000000000011111),
         .vga_x(vga_x),
         .vga_y(vga_y),
@@ -98,7 +85,6 @@ module sram_controller_unit_test (
         .SRAM_WE_N(SRAM_WE_N),
         .SRAM_ADDR(SRAM_ADDR),
         .SRAM_DQ(SRAM_DQ),
-        .LEDG(LEDG)
     );
 
 

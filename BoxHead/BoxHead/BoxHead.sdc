@@ -108,10 +108,10 @@ set_input_delay -add_delay -min -clock [get_clocks {sram_clk_100_20}] -clock_fal
 
 set_output_delay -add_delay  -clock [get_clocks {vga_clk_25}]  2.00 [get_ports {VGA_*}]
 
-set_output_delay -add_delay  -clock [get_clocks {sram_clk_100_50}] 1.00 [get_ports {SRAM_OE_N}]
-set_output_delay -add_delay  -clock [get_clocks {sram_clk_100_50}] 1.00 [get_ports {SRAM_WE_N}]
+set_output_delay -add_delay  -clock [get_clocks {sram_clk_100_50}] 2.00 [get_ports {SRAM_OE_N}]
+set_output_delay -add_delay  -clock [get_clocks {sram_clk_100_50}] 2.00 [get_ports {SRAM_WE_N}]
 
-set_output_delay -add_delay  -clock [get_clocks {sram_clk_100_50}] -reference_pin [get_ports {SRAM_OE_N}] 1.00 [get_ports {SRAM_ADDR[*]}]
+set_output_delay -add_delay  -clock [get_clocks {sram_clk_100_50}] 5.00 [get_ports {SRAM_ADDR[*]}]
 
 
 # set_output_delay -add_delay  -clock [get_clocks {main_clk_50}]  2.00 [get_ports {altera_reserved_tdo}]

@@ -25,12 +25,12 @@ module vga_unit_test (
     end
 
     // Setup VGA clock
-    logic vga_clk;
+    logic VGA_CLK;
     vga_pll vga_pll (
         .inclk0(clk), 
-        .c0(vga_clk)
+        .c0(VGA_CLK)
     );
-	 assign VGA_CLK = vga_clk;
+	 assign VGA_CLK = VGA_CLK;
 
     // Setup VGA controller
     logic [9:0] vga_x, vga_y;
