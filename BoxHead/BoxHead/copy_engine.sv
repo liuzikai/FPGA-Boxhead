@@ -93,6 +93,6 @@ module copy_engine #(SrcAddrWidth) (
     assign program_y = y;
     assign src_addr = src_addr_reg_next;  // request next data, which will be available at next cycle
     assign program_data = src_data;
-    assign program_write = (state == STATE_RUNNING && program_data != 16'h07E0);
+    assign program_write = (state == STATE_RUNNING && program_data != 16'h07E0 && x < 10'd640 && y < 10'd480);
 
 endmodule
