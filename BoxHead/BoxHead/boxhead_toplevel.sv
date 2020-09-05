@@ -31,7 +31,19 @@ module boxhead_toplevel(
                         OTG_RD_N,     // CY7C67200 Write
                         OTG_WR_N,     // CY7C67200 Read
                         OTG_RST_N,    // CY7C67200 Reset
-    input               OTG_INT       // CY7C67200 Interrupt
+    input        [1:0]  OTG_INT,      // CY7C67200 Interrupt
+
+    // SDRAM Interface
+    output logic [12:0] DRAM_ADDR,
+	output logic [1:0]  DRAM_BA,
+	output logic        DRAM_CAS_N,
+	output logic        DRAM_CKE,
+	output logic        DRAM_CS_N,
+	inout  logic [31:0] DRAM_DQ,
+	output logic [3:0]  DRAM_DQM,
+	output logic        DRAM_RAS_N,
+	output logic        DRAM_WE_N,
+	output logic        DRAM_CLK
 );
 
     // ================================ Common ================================
@@ -71,8 +83,8 @@ module boxhead_toplevel(
     logic [15:0] program_data;
     logic program_write;
 
-    logic [22:0] src_addr;
-    logic [2:0] src_raw_data;
+    logic [19:0] src_addr;
+    logic [3:0] src_raw_data;
     logic [15:0] src_data;
 
     logic palette_index;
@@ -130,8 +142,8 @@ module boxhead_toplevel(
     // ================================ SOC (including Copy Engine) ================================
 
     boxhead_soc boxhead_soc (
-        .clk_clk(Clk),         
-        .reset_reset_n(1'b1),  // never reset NIOS
+        .clk_clk(clk),         
+        .reset_reset_n(~reset),
 
         .sdram_wire_addr(DRAM_ADDR), 
         .sdram_wire_ba(DRAM_BA),   
@@ -153,7 +165,7 @@ module boxhead_toplevel(
         .otg_hpi_reset_export(hpi_reset),
 
         .keycode_export(keycode),
-        
+
         .copy_engine_export_data_src_data(src_data),
 		.copy_engine_export_data_src_addr(src_addr),
 		.copy_engine_export_data_program_y(program_y),
@@ -162,10 +174,5 @@ module boxhead_toplevel(
 		.copy_engine_export_data_program_data(program_data),
 		.copy_engine_export_data_palette_index(palette_index)
     );
-
-    
-
-    
-    
 
 endmodule

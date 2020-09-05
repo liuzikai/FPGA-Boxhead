@@ -1,5 +1,12 @@
 	boxhead_soc u0 (
 		.clk_clk                               (<connected-to-clk_clk>),                               //                     clk.clk
+		.copy_engine_export_data_src_data      (<connected-to-copy_engine_export_data_src_data>),      // copy_engine_export_data.src_data
+		.copy_engine_export_data_src_addr      (<connected-to-copy_engine_export_data_src_addr>),      //                        .src_addr
+		.copy_engine_export_data_program_y     (<connected-to-copy_engine_export_data_program_y>),     //                        .program_y
+		.copy_engine_export_data_program_x     (<connected-to-copy_engine_export_data_program_x>),     //                        .program_x
+		.copy_engine_export_data_program_write (<connected-to-copy_engine_export_data_program_write>), //                        .program_write
+		.copy_engine_export_data_program_data  (<connected-to-copy_engine_export_data_program_data>),  //                        .program_data
+		.copy_engine_export_data_palette_index (<connected-to-copy_engine_export_data_palette_index>), //                        .palette_index
 		.key_wire_export                       (<connected-to-key_wire_export>),                       //                key_wire.export
 		.keycode_export                        (<connected-to-keycode_export>),                        //                 keycode.export
 		.otg_hpi_address_export                (<connected-to-otg_hpi_address_export>),                //         otg_hpi_address.export
@@ -19,13 +26,6 @@
 		.sdram_wire_dq                         (<connected-to-sdram_wire_dq>),                         //                        .dq
 		.sdram_wire_dqm                        (<connected-to-sdram_wire_dqm>),                        //                        .dqm
 		.sdram_wire_ras_n                      (<connected-to-sdram_wire_ras_n>),                      //                        .ras_n
-		.sdram_wire_we_n                       (<connected-to-sdram_wire_we_n>),                       //                        .we_n
-		.copy_engine_export_data_src_data      (<connected-to-copy_engine_export_data_src_data>),      // copy_engine_export_data.src_data
-		.copy_engine_export_data_src_addr      (<connected-to-copy_engine_export_data_src_addr>),      //                        .src_addr
-		.copy_engine_export_data_program_y     (<connected-to-copy_engine_export_data_program_y>),     //                        .program_y
-		.copy_engine_export_data_program_x     (<connected-to-copy_engine_export_data_program_x>),     //                        .program_x
-		.copy_engine_export_data_program_write (<connected-to-copy_engine_export_data_program_write>), //                        .program_write
-		.copy_engine_export_data_program_data  (<connected-to-copy_engine_export_data_program_data>),  //                        .program_data
-		.copy_engine_export_data_palette_index (<connected-to-copy_engine_export_data_palette_index>)  //                        .palette_index
+		.sdram_wire_we_n                       (<connected-to-sdram_wire_we_n>)                        //                        .we_n
 	);
 

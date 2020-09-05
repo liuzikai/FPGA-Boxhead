@@ -38,7 +38,7 @@
 
 set_global_assignment -name FAMILY "Cyclone IV E"
 set_global_assignment -name DEVICE EP4CE115F29C7
-set_global_assignment -name TOP_LEVEL_ENTITY copy_engine_unit_test
+set_global_assignment -name TOP_LEVEL_ENTITY boxhead_toplevel
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 18.1.0
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "00:37:15  八月 30, 2020"
 set_global_assignment -name LAST_QUARTUS_VERSION "18.1.0 Standard Edition"
@@ -362,10 +362,10 @@ set_location_assignment PIN_E5 -to TD_HS
 set_location_assignment PIN_D4 -to OTG_DACK_N[1]
 set_location_assignment PIN_C4 -to OTG_DACK_N[0]
 set_location_assignment PIN_A3 -to OTG_CS_N
-set_location_assignment PIN_B3 -to OTG_OE_N
+set_location_assignment PIN_B3 -to OTG_RD_N
 set_location_assignment PIN_B4 -to OTG_DREQ[1]
 set_location_assignment PIN_J1 -to OTG_DREQ[0]
-set_location_assignment PIN_A4 -to OTG_WE_N
+set_location_assignment PIN_A4 -to OTG_WR_N
 set_location_assignment PIN_H7 -to OTG_ADDR[0]
 set_location_assignment PIN_C3 -to OTG_ADDR[1]
 set_location_assignment PIN_C6 -to OTG_FSPEED
@@ -694,6 +694,22 @@ set_global_assignment -name CYCLONEIII_CONFIGURATION_DEVICE EPCS64
 
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
+set_global_assignment -name SYSTEMVERILOG_FILE boxhead_toplevel.sv
+set_global_assignment -name SYSTEMVERILOG_FILE zombie_palette.sv
+set_global_assignment -name SYSTEMVERILOG_FILE on_chip_mem.sv
+set_global_assignment -name SYSTEMVERILOG_FILE hpi_io_intf.sv
+set_global_assignment -name SYSTEMVERILOG_FILE hex_driver.sv
+set_global_assignment -name QIP_FILE sram_pll.qip
+set_global_assignment -name SYSTEMVERILOG_FILE vga_controller.sv
+set_global_assignment -name SYSTEMVERILOG_FILE vga_color_extend.sv
+set_global_assignment -name SDC_FILE BoxHead.sdc
+set_global_assignment -name SYSTEMVERILOG_FILE sram_controller.sv
+set_global_assignment -name SYSTEMVERILOG_FILE copy_engine.sv
+set_global_assignment -name SYSTEMVERILOG_FILE tests/copy_engine_unit_test.sv
+set_global_assignment -name SYSTEMVERILOG_FILE tests/snow_mem.sv
+set_global_assignment -name SYSTEMVERILOG_FILE tests/sram_controller_motion_test.sv
+set_global_assignment -name SYSTEMVERILOG_FILE tests/ball.sv
+set_global_assignment -name QIP_FILE boxhead_soc/synthesis/boxhead_soc.qip
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to CLOCK_50
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to CLOCK2_50
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to CLOCK3_50
@@ -941,8 +957,8 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to OTG_DATA[15]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to OTG_ADDR[0]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to OTG_ADDR[1]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to OTG_CS_N
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to OTG_WE_N
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to OTG_OE_N
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to OTG_WR_N
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to OTG_RD_N
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to OTG_INT[0]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to OTG_INT[1]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to OTG_RST_N
@@ -1235,19 +1251,3 @@ set_global_assignment -name LL_ROOT_REGION ON -section_id "Root Region"
 set_global_assignment -name LL_MEMBER_STATE LOCKED -section_id "Root Region"
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
-set_global_assignment -name SYSTEMVERILOG_FILE zombie_palette.sv
-set_global_assignment -name SYSTEMVERILOG_FILE on_chip_mem.sv
-set_global_assignment -name SYSTEMVERILOG_FILE hpi_io_intf.sv
-set_global_assignment -name SYSTEMVERILOG_FILE hex_driver.sv
-set_global_assignment -name QIP_FILE sram_pll.qip
-set_global_assignment -name SYSTEMVERILOG_FILE vga_controller.sv
-set_global_assignment -name SYSTEMVERILOG_FILE vga_color_extend.sv
-set_global_assignment -name SDC_FILE BoxHead.sdc
-set_global_assignment -name SYSTEMVERILOG_FILE sram_controller.sv
-set_global_assignment -name SYSTEMVERILOG_FILE copy_engine.sv
-set_global_assignment -name SYSTEMVERILOG_FILE tests/copy_engine_unit_test.sv
-set_global_assignment -name SYSTEMVERILOG_FILE tests/snow_mem.sv
-set_global_assignment -name SYSTEMVERILOG_FILE tests/sram_controller_motion_test.sv
-set_global_assignment -name SYSTEMVERILOG_FILE tests/ball.sv
-set_global_assignment -name QIP_FILE boxhead_soc/synthesis/boxhead_soc.qip
-set_global_assignment -name VERILOG_FILE boxhead_soc/synthesis/boxhead_soc.v -library boxhead_soc

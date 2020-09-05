@@ -50,7 +50,7 @@ create_clock -name {main_clk_50} -period 20.00 -waveform { 0.00 10.00 } [get_por
 
 create_generated_clock -name {sram_clk_100_50} -source [get_ports {CLOCK_50}] -duty_cycle 50.00 -multiply_by 2 -divide_by 1 -phase 36.00 -master_clock {main_clk_50} [get_pins {sram_pll|altpll_component|auto_generated|pll1|clk[0]}]
 create_generated_clock -name {sram_clk_100_20} -source [get_ports {CLOCK_50}] -duty_cycle 25.00 -multiply_by 2 -divide_by 1 -phase -54.00 -master_clock {main_clk_50} [get_pins {sram_pll|altpll_component|auto_generated|pll1|clk[1]}]
-create_generated_clock -name {vga_clk_25} -source [get_ports {CLOCK_50}] -duty_cycle 50.00 -multiply_by 1 -divide_by 2 -phase 0.00 -master_clock {main_clk_50} [get_pins {vsram_pll|altpll_component|auto_generated|pll1|clk[2]}]
+create_generated_clock -name {vga_clk_25} -source [get_ports {CLOCK_50}] -duty_cycle 50.00 -multiply_by 1 -divide_by 2 -phase 0.00 -master_clock {main_clk_50} [get_pins {sram_pll|altpll_component|auto_generated|pll1|clk[2]}]
 
 create_generated_clock -name {boxhead_soc|sdram_pll|sd1|pll7|clk[0]} -source [get_pins {boxhead_soc|sdram_pll|sd1|pll7|inclk[0]}] -duty_cycle 50.00 -multiply_by 1 -phase 0.00 -master_clock {main_clk_50} [get_pins {boxhead_soc|sdram_pll|sd1|pll7|clk[0]}] 
 create_generated_clock -name {boxhead_soc|sdram_pll|sd1|pll7|clk[1]} -source [get_pins {boxhead_soc|sdram_pll|sd1|pll7|inclk[0]}] -duty_cycle 50.00 -multiply_by 1 -phase -54.00 -master_clock {main_clk_50} [get_pins {boxhead_soc|sdram_pll|sd1|pll7|clk[1]}] 
@@ -111,7 +111,7 @@ set_output_delay -add_delay -max -clock [get_clocks {vga_clk_25}]  2.00 [get_por
 set_output_delay -add_delay -max -clock [get_clocks {sram_clk_100_50}] 2.00 [get_ports {SRAM_OE_N}]
 set_output_delay -add_delay -max -clock [get_clocks {sram_clk_100_50}] 2.00 [get_ports {SRAM_WE_N}]
 
-set_output_delay -add_delay -max -clock [get_clocks {sram_clk_100_50}] 5.00 [get_ports {SRAM_ADDR[*]}]
+# set_output_delay -add_delay -max -clock [get_clocks {sram_clk_100_50}] 5.00 [get_ports {SRAM_ADDR[*]}]
 
 
 set_output_delay -add_delay  -clock [get_clocks {main_clk_50}]  2.00 [get_ports {altera_reserved_tdo}]

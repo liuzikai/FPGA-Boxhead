@@ -24,7 +24,7 @@ def enum_files(input_dir: str) -> map:
 RESIZE_FACTOR = 0.5
 ALPHA_THRESHOLD = 150
 TRANSPARENT_COLOR = 0x07E0
-PALETTE_WIDTH = 3
+PALETTE_WIDTH = 4
 PALETTE_SIZE = (1 << PALETTE_WIDTH)
 
 def run(input_dir: str) -> None:
@@ -41,26 +41,26 @@ def run(input_dir: str) -> None:
          img = img.resize((int(img.size[0] * RESIZE_FACTOR), int(img.size[1] * RESIZE_FACTOR)), Image.ANTIALIAS)
          images[png_name] = img
 
-    # color_counts = {}
-    # for png_name, img in images.items():
-    #      for y in range(img.size[1]):
-    #         for x in range(img.size[0]):
-    #             r, g, b, a = img.getpixel((x,y))
-    #             if a < ALPHA_THRESHOLD:
-    #                 color = TRANSPARENT_COLOR
-    #             else:
-    #                 color = rgb_to_16bit((r, g, b))
-    #             if color not in color_counts.keys():
-    #                 color_counts[color] = 1
-    #             else:
-    #                 color_counts[color] += 1
+    color_counts = {}
+    for png_name, img in images.items():
+         for y in range(img.size[1]):
+            for x in range(img.size[0]):
+                r, g, b, a = img.getpixel((x,y))
+                if a < ALPHA_THRESHOLD:
+                    color = TRANSPARENT_COLOR
+                else:
+                    color = rgb_to_16bit((r, g, b))
+                if color not in color_counts.keys():
+                    color_counts[color] = 1
+                else:
+                    color_counts[color] += 1
 
-    # palette = [k for k, _ in sorted(color_counts.items(), key=lambda item: item[1])][-PALETTE_SIZE:]
+    palette = [k for k, _ in sorted(color_counts.items(), key=lambda item: item[1])][-PALETTE_SIZE:]
 
-    # print("Discovered %d colors, select %d" % (len(color_counts), len(palette)))
+    print("Discovered %d colors, select %d" % (len(color_counts), len(palette)))
     
-    palette_hex = ['0x858585','0xFFFFFF', '0xBCD0EC', '0x5E6876', '0x131313', '0x252525', '0x707070']
-    palette = [rgb_to_16bit(hex_to_rgb(h)) for h in palette_hex] + [TRANSPARENT_COLOR]
+    # palette_hex = ['0x858585','0xFFFFFF', '0xBCD0EC', '0x5E6876', '0x131313', '0x252525', '0x707070']
+    # palette = [rgb_to_16bit(hex_to_rgb(h)) for h in palette_hex] + [TRANSPARENT_COLOR]
 
     assert len(palette) <= PALETTE_SIZE
     assert TRANSPARENT_COLOR in palette, "Transparent color not in palette"
@@ -79,6 +79,7 @@ def run(input_dir: str) -> None:
     offset = 0
     offset_file = open(os.path.join(out_dir, "offset.txt"), "w")
     output_file = open(os.path.join(out_dir, "output.txt"), "w")
+    buf = 0
     for png_name in images.keys():
         img = images[png_name]
         png_relpath = png_files[png_name]
@@ -96,8 +97,15 @@ def run(input_dir: str) -> None:
 
                 index = kd_tree.query(revert_to_rgb(color))[1]
                 
-                output_file.write("%X\n" % index)
+                buf = buf << 4 | index
                 offset += 1
+                if offset % 4 == 0:
+                    output_file.write("\n")
+                    output_file.write("%04X" % buf)
+                    buf = 0
+                
+                # output_file.write("%X " % index)
+                # offset += 1
 
                 out_image.putpixel((x,y), revert_to_rgb(palette[index]))
 

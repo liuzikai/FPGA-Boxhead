@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <EnsembleReport name="boxhead_soc" kind="boxhead_soc" version="1.0" fabric="QSYS">
  <!-- Format version 18.1 625 (Future versions may contain additional information.) -->
- <!-- 2020.09.05.23:05:52 -->
+ <!-- 2020.09.06.02:30:22 -->
  <!-- A collection of modules and connections -->
  <parameter name="AUTO_GENERATION_ID">
   <type>java.lang.Integer</type>
-  <value>1599314752</value>
+  <value>1599327021</value>
   <derived>false</derived>
   <enabled>true</enabled>
   <visible>false</visible>
@@ -332,9 +332,9 @@ parameters are a RESULT of the module parameters. -->
    </port>
    <clockDomainMember>
     <isBridge>false</isBridge>
-    <moduleName>copy_engine</moduleName>
+    <moduleName>copy_engine_core</moduleName>
     <slaveName>CLK</slaveName>
-    <name>copy_engine.CLK</name>
+    <name>copy_engine_core.CLK</name>
    </clockDomainMember>
    <clockDomainMember>
     <isBridge>false</isBridge>
@@ -478,10 +478,10 @@ parameters are a RESULT of the module parameters. -->
   </interface>
  </module>
  <module
-   name="copy_engine"
+   name="copy_engine_core"
    kind="Copy_Engine"
    version="1.0"
-   path="copy_engine">
+   path="copy_engine_core">
   <!-- Describes a single module. Module parameters are
 the requested settings for a module instance. -->
   <parameter name="deviceFamily">
@@ -1030,7 +1030,7 @@ parameters are a RESULT of the module parameters. -->
    <port>
     <name>src_addr</name>
     <direction>Output</direction>
-    <width>22</width>
+    <width>20</width>
     <role>src_addr</role>
    </port>
    <port>
@@ -4957,7 +4957,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="dataSlaveMapParam">
    <type>java.lang.String</type>
-   <value><![CDATA[<address-map><slave name='onchip_memory2_0.s1' start='0x0' end='0x10' type='altera_avalon_onchip_memory2.s1' /><slave name='otg_hpi_reset.s1' start='0x20' end='0x30' type='altera_avalon_pio.s1' /><slave name='otg_hpi_cs.s1' start='0x30' end='0x40' type='altera_avalon_pio.s1' /><slave name='copy_engine.Copy_Engine_Slave' start='0x40' end='0x80' type='Copy_Engine.Copy_Engine_Slave' /><slave name='otg_hpi_w.s1' start='0x80' end='0x90' type='altera_avalon_pio.s1' /><slave name='otg_hpi_r.s1' start='0x90' end='0xA0' type='altera_avalon_pio.s1' /><slave name='otg_hpi_data.s1' start='0xA0' end='0xB0' type='altera_avalon_pio.s1' /><slave name='otg_hpi_address.s1' start='0xB0' end='0xC0' type='altera_avalon_pio.s1' /><slave name='keycode.s1' start='0xC0' end='0xD0' type='altera_avalon_pio.s1' /><slave name='key.s1' start='0xD0' end='0xE0' type='altera_avalon_pio.s1' /><slave name='sdram_pll.pll_slave' start='0xE0' end='0xF0' type='altpll.pll_slave' /><slave name='sysid_qsys_0.control_slave' start='0xF8' end='0x100' type='altera_avalon_sysid_qsys.control_slave' /><slave name='jtag_uart_0.avalon_jtag_slave' start='0x100' end='0x108' type='altera_avalon_jtag_uart.avalon_jtag_slave' /><slave name='nios2_gen2_0.debug_mem_slave' start='0x1000' end='0x1800' type='altera_nios2_gen2.debug_mem_slave' /><slave name='sdram.s1' start='0x10000000' end='0x18000000' type='altera_avalon_new_sdram_controller.s1' /></address-map>]]></value>
+   <value><![CDATA[<address-map><slave name='onchip_memory2_0.s1' start='0x0' end='0x10' type='altera_avalon_onchip_memory2.s1' /><slave name='otg_hpi_reset.s1' start='0x20' end='0x30' type='altera_avalon_pio.s1' /><slave name='otg_hpi_cs.s1' start='0x30' end='0x40' type='altera_avalon_pio.s1' /><slave name='copy_engine_core.Copy_Engine_Slave' start='0x40' end='0x80' type='Copy_Engine.Copy_Engine_Slave' /><slave name='otg_hpi_w.s1' start='0x80' end='0x90' type='altera_avalon_pio.s1' /><slave name='otg_hpi_r.s1' start='0x90' end='0xA0' type='altera_avalon_pio.s1' /><slave name='otg_hpi_data.s1' start='0xA0' end='0xB0' type='altera_avalon_pio.s1' /><slave name='otg_hpi_address.s1' start='0xB0' end='0xC0' type='altera_avalon_pio.s1' /><slave name='keycode.s1' start='0xC0' end='0xD0' type='altera_avalon_pio.s1' /><slave name='key.s1' start='0xD0' end='0xE0' type='altera_avalon_pio.s1' /><slave name='sdram_pll.pll_slave' start='0xE0' end='0xF0' type='altpll.pll_slave' /><slave name='sysid_qsys_0.control_slave' start='0xF8' end='0x100' type='altera_avalon_sysid_qsys.control_slave' /><slave name='jtag_uart_0.avalon_jtag_slave' start='0x100' end='0x108' type='altera_avalon_jtag_uart.avalon_jtag_slave' /><slave name='nios2_gen2_0.debug_mem_slave' start='0x1000' end='0x1800' type='altera_nios2_gen2.debug_mem_slave' /><slave name='sdram.s1' start='0x10000000' end='0x18000000' type='altera_avalon_new_sdram_controller.s1' /></address-map>]]></value>
    <derived>false</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -5625,9 +5625,9 @@ parameters are a RESULT of the module parameters. -->
    </port>
    <memoryBlock>
     <isBridge>false</isBridge>
-    <moduleName>copy_engine</moduleName>
+    <moduleName>copy_engine_core</moduleName>
     <slaveName>Copy_Engine_Slave</slaveName>
-    <name>copy_engine.Copy_Engine_Slave</name>
+    <name>copy_engine_core.Copy_Engine_Slave</name>
     <baseAddress>64</baseAddress>
     <span>64</span>
    </memoryBlock>
@@ -15117,7 +15117,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>embeddedsw.CMacro.TIMESTAMP</name>
-   <value>1599314752</value>
+   <value>1599327021</value>
   </assignment>
   <assignment>
    <name>embeddedsw.dts.compatible</name>
@@ -15137,7 +15137,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>embeddedsw.dts.params.timestamp</name>
-   <value>1599314752</value>
+   <value>1599327021</value>
   </assignment>
   <assignment>
    <name>embeddedsw.dts.vendor</name>
@@ -15153,7 +15153,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="timestamp">
    <type>int</type>
-   <value>1599314752</value>
+   <value>1599327021</value>
    <derived>true</derived>
    <enabled>false</enabled>
    <visible>false</visible>
@@ -15611,11 +15611,11 @@ parameters are a RESULT of the module parameters. -->
   </interface>
  </module>
  <connection
-   name="nios2_gen2_0.data_master/copy_engine.Copy_Engine_Slave"
+   name="nios2_gen2_0.data_master/copy_engine_core.Copy_Engine_Slave"
    kind="avalon"
    version="18.1"
    start="nios2_gen2_0.data_master"
-   end="copy_engine.Copy_Engine_Slave">
+   end="copy_engine_core.Copy_Engine_Slave">
   <parameter name="arbitrationPriority">
    <type>int</type>
    <value>1</value>
@@ -15658,7 +15658,7 @@ parameters are a RESULT of the module parameters. -->
   </parameter>
   <startModule>nios2_gen2_0</startModule>
   <startConnectionPoint>data_master</startConnectionPoint>
-  <endModule>copy_engine</endModule>
+  <endModule>copy_engine_core</endModule>
   <endConnectionPoint>Copy_Engine_Slave</endConnectionPoint>
  </connection>
  <connection
@@ -16658,11 +16658,11 @@ parameters are a RESULT of the module parameters. -->
   <endConnectionPoint>clk</endConnectionPoint>
  </connection>
  <connection
-   name="clk_0.clk/copy_engine.CLK"
+   name="clk_0.clk/copy_engine_core.CLK"
    kind="clock"
    version="18.1"
    start="clk_0.clk"
-   end="copy_engine.CLK">
+   end="copy_engine_core.CLK">
   <parameter name="deviceFamily">
    <type>java.lang.String</type>
    <value>UNKNOWN</value>
@@ -16681,7 +16681,7 @@ parameters are a RESULT of the module parameters. -->
   </parameter>
   <startModule>clk_0</startModule>
   <startConnectionPoint>clk</startConnectionPoint>
-  <endModule>copy_engine</endModule>
+  <endModule>copy_engine_core</endModule>
   <endConnectionPoint>CLK</endConnectionPoint>
  </connection>
  <connection
@@ -17071,11 +17071,11 @@ parameters are a RESULT of the module parameters. -->
   <endConnectionPoint>irq</endConnectionPoint>
  </connection>
  <connection
-   name="clk_0.clk_reset/copy_engine.RESET"
+   name="clk_0.clk_reset/copy_engine_core.RESET"
    kind="reset"
    version="18.1"
    start="clk_0.clk_reset"
-   end="copy_engine.RESET">
+   end="copy_engine_core.RESET">
   <parameter name="deviceFamily">
    <type>java.lang.String</type>
    <value>UNKNOWN</value>
@@ -17094,7 +17094,7 @@ parameters are a RESULT of the module parameters. -->
   </parameter>
   <startModule>clk_0</startModule>
   <startConnectionPoint>clk_reset</startConnectionPoint>
-  <endModule>copy_engine</endModule>
+  <endModule>copy_engine_core</endModule>
   <endConnectionPoint>RESET</endConnectionPoint>
  </connection>
  <connection
