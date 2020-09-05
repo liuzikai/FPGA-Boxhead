@@ -64,7 +64,7 @@ module copy_engine_unit_test (
     logic [15:0] src_data;
 
     logic copy_engine_execute;
-    logic copy_engine_status;
+    logic copy_engine_done;
 
     copy_engine #(SrcAddrWidth) copy_engine (
         .dest_x_start(470),
@@ -73,13 +73,13 @@ module copy_engine_unit_test (
         .dest_y_end(390),
         .src_addr_start(0),
         .execute(copy_engine_execute),
-        .status(copy_engine_status),
+        .done(copy_engine_done),
         .*
     );
 
     assign copy_engine_execute = ~frame_clk;  // trigger engine each frame
 
-    assign LEDG[0] = copy_engine_status;
+    assign LEDG[0] = ~copy_engine_done;
     assign LEDG[1] = copy_engine_execute;
     assign LEDG[7:2] = 6'b0;
 

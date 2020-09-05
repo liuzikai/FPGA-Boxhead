@@ -19,7 +19,7 @@ def convert(input_filename : str, output_filename: str) -> None:
                 # if (a == 0):
                 #     out.write("07E0\n")
                 # else:
-                out.write("%04x\n" % (((r & 0xF8) << 8) | ((g % 0xFC) << 3) | ((b & 0xF8) >> 3)))
+                out.write("%04x\n" % (((r & 0xF8) << 8) | ((g & 0xFC) << 3) | ((b & 0xF8) >> 3)))
     
     # outImg.save(os.path.splitext(args.image)[0] + "_restore.png")
 

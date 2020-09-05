@@ -7,6 +7,18 @@ module boxhead_toplevel(
     inout wire [15:0] SRAM_DQ
 );
 
+    parameter SrcAddrWidth = 22;
+
+    on_chip_mem on_chip_mem (
+        .clk(clk),
+        .read_addr(src_addr),
+        .data_out(src_raw_data)
+    );
+
+    zombie_palette zombie_palette (
+        .index(src_raw_data),
+        .color(src_data)
+    );
     
 
 endmodule

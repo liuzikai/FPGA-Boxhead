@@ -17,7 +17,7 @@ module copy_engine #(SrcAddrWidth) (
     input  logic                      execute,
 
     // Output status
-    output logic                      status,
+    output logic                      done,
 
     // Wires between data src
     output logic [SrcAddrWidth-1:0]   src_addr,
@@ -88,7 +88,7 @@ module copy_engine #(SrcAddrWidth) (
         endcase
     end
 
-    assign status = (state != STATE_DONE);
+    assign done = (state == STATE_DONE);
     assign program_x = x;
     assign program_y = y;
     assign src_addr = src_addr_reg_next;  // request next data, which will be available at next cycle
