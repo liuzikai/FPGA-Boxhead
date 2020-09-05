@@ -90,7 +90,7 @@ vsim.dbg
 # Reference: https://github.com/github/gitignore/blob/64ef3e4f0036c0f33453fd8bce8030da87448743/Global/Eclipse.gitignore
 
 *.pydevproject
-.project
+# .project
 .metadata
 bin/**
 tmp/**
