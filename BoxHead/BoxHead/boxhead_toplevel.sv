@@ -25,13 +25,13 @@ module boxhead_toplevel(
                         VGA_HS,       // VGA horizontal sync signal
 
     // CY7C67200 Interface
-    inout  wire  [15:0] OTG_DATA,     // CY7C67200 Data bus 16 Bits
-    output logic [1:0]  OTG_ADDR,     // CY7C67200 Address 2 Bits
-    output logic        OTG_CS_N,     // CY7C67200 Chip Select
-                        OTG_RD_N,     // CY7C67200 Write
-                        OTG_WR_N,     // CY7C67200 Read
-                        OTG_RST_N,    // CY7C67200 Reset
-    input        [1:0]  OTG_INT,      // CY7C67200 Interrupt
+    inout  wire  [15:0] OTG_DATA,
+    output logic [1:0]  OTG_ADDR,
+    output logic        OTG_CS_N,
+                        OTG_OE_N,
+                        OTG_WE_N,
+                        OTG_RST_N,
+    input        [1:0]  OTG_INT,
 
     // SDRAM Interface
     output logic [12:0] DRAM_ADDR,
@@ -89,6 +89,8 @@ module boxhead_toplevel(
 
     logic palette_index;
 
+    logic current_frame;
+
     on_chip_mem on_chip_mem (
         .clk(clk),
         .read_addr(src_addr),
@@ -128,8 +130,8 @@ module boxhead_toplevel(
         // Signals connected to EZ-OTG chip
         .OTG_DATA(OTG_DATA),    
         .OTG_ADDR(OTG_ADDR),    
-        .OTG_RD_N(OTG_RD_N),    
-        .OTG_WR_N(OTG_WR_N),    
+        .OTG_RD_N(OTG_OE_N),    
+        .OTG_WR_N(OTG_WE_N),    
         .OTG_CS_N(OTG_CS_N),
         .OTG_RST_N(OTG_RST_N)
     );
@@ -172,7 +174,8 @@ module boxhead_toplevel(
 		.copy_engine_export_data_program_x(program_x),
 		.copy_engine_export_data_program_write(program_write),
 		.copy_engine_export_data_program_data(program_data),
-		.copy_engine_export_data_palette_index(palette_index)
+        .copy_engine_export_data_palette_index(palette_index),
+        .copy_engine_export_data_current_frame(current_frame)
     );
 
 endmodule

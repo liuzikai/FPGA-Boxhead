@@ -83,7 +83,7 @@ module sram_controller_motion_test (
         .SRAM_OE_N(SRAM_OE_N),
         .SRAM_WE_N(SRAM_WE_N),
         .SRAM_ADDR(SRAM_ADDR),
-        .SRAM_DQ(SRAM_DQ),
+        .SRAM_DQ(SRAM_DQ)
     );
 
 

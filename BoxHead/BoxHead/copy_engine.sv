@@ -1,6 +1,5 @@
 /*
     Graphic Copy Engine
-
     Use 0x07E0 (pure green) as transparent color
 */
 
@@ -14,7 +13,6 @@ module copy_engine #(SrcAddrWidth) (
                                       dest_y_start,
                                       dest_y_end,  // exclusive
     input  logic [SrcAddrWidth-1:0]   src_addr_start,
-    input  logic                      flip_x,
     input  logic                      execute,
 
     // Output status
@@ -41,7 +39,6 @@ module copy_engine #(SrcAddrWidth) (
     logic [9:0] x_in, y_in;
 
     logic [SrcAddrWidth-1:0] src_addr_reg, src_addr_reg_next;
-    logic flip_x_reg, flip_x_reg_in;
 
     always_ff @ (posedge clk)
 	begin
@@ -50,13 +47,11 @@ module copy_engine #(SrcAddrWidth) (
             x <= 10'b0;
             y <= 10'b0;
             src_addr_reg <= {SrcAddrWidth{1'b0}};
-            flip_x_reg <= 1'b0;
         end else begin
 			state <= state_in;
             x <= x_in;
             y <= y_in;
             src_addr_reg <= src_addr_reg_next;
-            flip_x_reg <= flip_x_reg_in;
 		end
 	end
 
@@ -67,7 +62,6 @@ module copy_engine #(SrcAddrWidth) (
                 x_in = dest_x_start;
                 y_in = dest_y_start;
                 src_addr_reg_next = src_addr_start;
-                flip_x_reg_in = flip_x;
             end
             STATE_RUNNING: begin
                 state_in = STATE_RUNNING;  // default
@@ -83,20 +77,18 @@ module copy_engine #(SrcAddrWidth) (
                 end
                 if (execute == 1'b0) state_in = STATE_FREE;  // early exit
                 src_addr_reg_next = src_addr_reg + 1;
-                flip_x_reg_in = flip_x_reg;
             end
             STATE_DONE: begin
                 state_in = execute ? STATE_DONE : STATE_FREE;
                 x_in = x;
                 y_in = y;
                 src_addr_reg_next = src_addr_start;
-                flip_x_reg_in = flip_x_reg;
             end
         endcase
     end
 
     assign done = (state == STATE_DONE);
-    assign program_x = flip_x_reg ? ((dest_x_end - 1) - (x - dest_x_start)) : x;
+    assign program_x = x;
     assign program_y = y;
     assign src_addr = src_addr_reg_next;  // request next data, which will be available at next cycle
     assign program_data = src_data;

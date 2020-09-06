@@ -146,7 +146,7 @@ C_SRCS += main.c
 C_SRCS += keyboard/io_handler.c
 C_SRCS += keyboard/keyboard.c
 C_SRCS += keyboard/usb.c
-CXX_SRCS :=
+CXX_SRCS := graphic/graphic_engine.cpp
 ASM_SRCS :=
 
 
