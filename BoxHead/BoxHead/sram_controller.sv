@@ -101,11 +101,11 @@ module sram_controller (
     logic [15:0] vga_read_reg;
 
     always_ff @ (posedge sram_clk) begin
-        // if (reset) begin
-        //     sram_out_reg <= 16'b0;
-        //     sram_write_enabled <= 0;
-        //     sram_read_enabled <= 0;
-        // end else begin
+        if (reset) begin
+            sram_out_reg <= 16'b0;
+            sram_write_enabled <= 0;
+            sram_read_enabled <= 0;
+        end else begin
             unique case (stage)
                 STAGE_BG: begin
                     // Enter Write #1 stage
@@ -132,7 +132,7 @@ module sram_controller (
                     sram_read_enabled <= 0;
                 end
             endcase
-        // end
+        end
     end
 
     // Launch SRAM addr in advance

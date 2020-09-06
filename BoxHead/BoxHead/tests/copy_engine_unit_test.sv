@@ -75,7 +75,7 @@ module copy_engine_unit_test (
         .src_addr_start(0),
         .execute(copy_engine_execute),
         .done(copy_engine_done),
-        // .flip_x(1'b0),
+        .flip_x(1'b0),
         .*
     );
 
