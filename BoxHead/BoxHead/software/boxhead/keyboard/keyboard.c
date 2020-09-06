@@ -432,7 +432,7 @@ void keyboard_init() {
     usleep(10000);
 }
 
-int keyboard_fetch(unsigned int *keycode) {
+int keyboard_fetch(alt_u16 *keycode) {
     toggle++;
 
     io_write(HPI_ADDR, 0x0500); // the start address
@@ -475,7 +475,7 @@ int keyboard_fetch(unsigned int *keycode) {
 
     // The first two keycodes are stored in 0x051E. Other keycodes are in  subsequent addresses.
     *keycode = usb_read(0x051e);
-    printf("\nThe first two keycode values are %04x\n", keycode);
+    printf("\nThe first two keycode values are %04x\n", *keycode);
     // We only need the first keycode, which is at the lower byte of keycode.
     // Send the keycode to hardware via PIO.
     *keycode_base = *keycode & 0xffu;
