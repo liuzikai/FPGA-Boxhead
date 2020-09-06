@@ -478,7 +478,7 @@ int keyboard_fetch(unsigned int *keycode) {
     printf("\nThe first two keycode values are %04x\n", keycode);
     // We only need the first keycode, which is at the lower byte of keycode.
     // Send the keycode to hardware via PIO.
-    *keycode_base = keycode & 0xff;
+    *keycode_base = *keycode & 0xffu;
 
     usleep(200);// usleep(5000);
     usb_ctl_val = usb_read(ctl_reg);

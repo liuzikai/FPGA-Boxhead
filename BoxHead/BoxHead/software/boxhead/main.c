@@ -8,24 +8,25 @@
 #include "keyboard/keyboard.h"
 #include "graphic/graphic_engine.h"
 
-int main(void) {
+int main() {
 
-    keyboard_init();
+//    keyboard_init();
+	graphic_engine_reset();
 
     unsigned int keycode;
-    bool keyboard_fetch_succeed;
 
     int last_direction;
 
     while (1) {
         draw(320 - 30, 320 + 30, 240 - 33, 240 + 33, 0, 0, 0);
+        printf("!\n");
 
-        if (keyboard_fetch(&keycode) != 0) {  // failed to fetch keycode
-            keycode = 0;
-            if (keyboard_hot_plugged()) {
-                keyboard_init();
-            }
-        }
+//        if (keyboard_fetch(&keycode) != 0) {  // failed to fetch keycode
+//            keycode = 0;
+//            if (keyboard_hot_plugged()) {
+//                keyboard_init();
+//            }
+//        }
 
         wait_for_next_frame();
     }

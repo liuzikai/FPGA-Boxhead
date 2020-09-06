@@ -28,22 +28,22 @@ module boxhead_toplevel(
     inout  wire  [15:0] OTG_DATA,
     output logic [1:0]  OTG_ADDR,
     output logic        OTG_CS_N,
-                        OTG_OE_N,
-                        OTG_WE_N,
+                        OTG_RD_N,
+                        OTG_WR_N,
                         OTG_RST_N,
     input        [1:0]  OTG_INT,
 
     // SDRAM Interface
     output logic [12:0] DRAM_ADDR,
-	output logic [1:0]  DRAM_BA,
-	output logic        DRAM_CAS_N,
-	output logic        DRAM_CKE,
-	output logic        DRAM_CS_N,
-	inout  logic [31:0] DRAM_DQ,
-	output logic [3:0]  DRAM_DQM,
-	output logic        DRAM_RAS_N,
-	output logic        DRAM_WE_N,
-	output logic        DRAM_CLK
+    output logic [1:0]  DRAM_BA,
+    output logic        DRAM_CAS_N,
+    output logic        DRAM_CKE,
+    output logic        DRAM_CS_N,
+    inout  logic [31:0] DRAM_DQ,
+    output logic [3:0]  DRAM_DQM,
+    output logic        DRAM_RAS_N,
+    output logic        DRAM_WE_N,
+    output logic        DRAM_CLK
 );
 
     // ================================ Common ================================
@@ -54,8 +54,8 @@ module boxhead_toplevel(
     sram_pll sram_pll (
         .inclk0(clk), 
         .c0(sram_clk),
-		.c1(sram_b_clk),
-		.c2(VGA_CLK)
+        .c1(sram_b_clk),
+        .c2(VGA_CLK)
     );
 
     // Synchronized reset
@@ -130,8 +130,8 @@ module boxhead_toplevel(
         // Signals connected to EZ-OTG chip
         .OTG_DATA(OTG_DATA),    
         .OTG_ADDR(OTG_ADDR),    
-        .OTG_RD_N(OTG_OE_N),    
-        .OTG_WR_N(OTG_WE_N),    
+        .OTG_RD_N(OTG_RD_N),    
+        .OTG_WR_N(OTG_WR_N),    
         .OTG_CS_N(OTG_CS_N),
         .OTG_RST_N(OTG_RST_N)
     );
@@ -145,7 +145,7 @@ module boxhead_toplevel(
 
     boxhead_soc boxhead_soc (
         .clk_clk(clk),         
-        .reset_reset_n(~reset),
+        .reset_reset_n(1'b1),
 
         .sdram_wire_addr(DRAM_ADDR), 
         .sdram_wire_ba(DRAM_BA),   
@@ -169,13 +169,19 @@ module boxhead_toplevel(
         .keycode_export(keycode),
 
         .copy_engine_export_data_src_data(src_data),
-		.copy_engine_export_data_src_addr(src_addr),
-		.copy_engine_export_data_program_y(program_y),
-		.copy_engine_export_data_program_x(program_x),
-		.copy_engine_export_data_program_write(program_write),
-		.copy_engine_export_data_program_data(program_data),
+        .copy_engine_export_data_src_addr(src_addr),
+        .copy_engine_export_data_program_y(program_y),
+        .copy_engine_export_data_program_x(program_x),
+        .copy_engine_export_data_program_write(program_write),
+        .copy_engine_export_data_program_data(program_data),
         .copy_engine_export_data_palette_index(palette_index),
-        .copy_engine_export_data_current_frame(current_frame)
+        .copy_engine_export_data_current_frame(current_frame),
+
+        .copy_engine_export_data_engine_done(LEDG[0]),
+        .copy_engine_export_data_engine_execute(LEDG[1])
     );
+
+
+    assign LEDG[7] = current_frame;
 
 endmodule
