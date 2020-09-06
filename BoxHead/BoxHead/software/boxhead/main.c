@@ -15,11 +15,12 @@ int main() {
 
     unsigned int keycode;
 
-    int last_direction;
+    int frame_index = 0;
+    int frame_count = 0;
 
     while (1) {
-        draw(320 - 30, 320 + 30, 240 - 33, 240 + 33, 0, 0, 0);
-        printf("!\n");
+        draw(320 - 18, 320 + 18, 240 - 19, 240 + 20, frame_index * 1404, 0, 1);
+//        printf("!\n");
 
 //        if (keyboard_fetch(&keycode) != 0) {  // failed to fetch keycode
 //            keycode = 0;
@@ -27,6 +28,13 @@ int main() {
 //                keyboard_init();
 //            }
 //        }
+
+        ++frame_count;
+        if (frame_count == 8) {
+        	frame_count = 0;
+        	++frame_index;
+        	if (frame_index == 8) frame_index = 0;
+        }
 
         wait_for_next_frame();
     }

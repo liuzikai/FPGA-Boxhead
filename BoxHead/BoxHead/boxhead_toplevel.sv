@@ -83,23 +83,29 @@ module boxhead_toplevel(
     logic [15:0] program_data;
     logic program_write;
 
-    logic [19:0] src_addr;
-    logic [3:0] src_raw_data;
+    logic [17:0] src_addr;
+    // logic [3:0] src_raw_data;
     logic [15:0] src_data;
 
     logic palette_index;
 
     logic current_frame;
 
-    on_chip_mem on_chip_mem (
+    // on_chip_mem on_chip_mem (
+    //     .clk(clk),
+    //     .read_addr(src_addr),
+    //     .data_out(src_raw_data)
+    // );
+
+    // zombie_palette zombie_palette (
+    //     .index(src_raw_data),
+    //     .color(src_data)
+    // );
+
+    on_chip_mem_core on_chip_mem_core (
         .clk(clk),
         .read_addr(src_addr),
-        .data_out(src_raw_data)
-    );
-
-    zombie_palette zombie_palette (
-        .index(src_raw_data),
-        .color(src_data)
+        .data_out(src_data)
     );
 
     // ================================ SRAM Controller ================================
@@ -143,6 +149,8 @@ module boxhead_toplevel(
 
     // ================================ SOC (including Copy Engine) ================================
 
+    logic copy_engine_execute, copy_engine_done;
+
     boxhead_soc boxhead_soc (
         .clk_clk(clk),         
         .reset_reset_n(1'b1),
@@ -177,11 +185,12 @@ module boxhead_toplevel(
         .copy_engine_export_data_palette_index(palette_index),
         .copy_engine_export_data_current_frame(current_frame),
 
-        .copy_engine_export_data_engine_done(LEDG[0]),
-        .copy_engine_export_data_engine_execute(LEDG[1])
+        .copy_engine_export_data_engine_done(copy_engine_done),
+        .copy_engine_export_data_engine_execute(copy_engine_execute)
     );
 
-
+    assign LEDG[0] = ~copy_engine_done;
+    assign LEDG[1] = copy_engine_execute;
     assign LEDG[7] = current_frame;
 
 endmodule

@@ -6,23 +6,25 @@
 
 #include "system.h"
 
-volatile unsigned int *ENGINE_REGS = (unsigned int *) (COPY_ENGINE_CORE_BASE);
+volatile unsigned int *ENGINE_REGS = (unsigned int *) (0x40);
 
 void graphic_engine_reset() {
 	ENGINE_REGS[7] = 0;
-	while (ENGINE_REGS[15] & 0x1 != 0) {}  // wait for reset
+	while ((ENGINE_REGS[15] & 0x1) != 0) {}  // wait for reset
 }
 
 void draw(int start_x, int end_x, int start_y, int end_y, int src_offset, int palette, int flip_x) {
 
     // Wait for the copy engine to finish last task
-	printf("Start waiting for graphic engine...\n");
-    while (ENGINE_REGS[15] & 0x1 == 0) {}
-    printf("Graphic engine done!\n");
+//	printf("Start waiting for graphic engine...\n");
+	if (ENGINE_REGS[7] == 1) {
+		while ((ENGINE_REGS[15] & 0x1) == 0) {}
 
-    // Clear Execute
-    ENGINE_REGS[7] = 0;
-    while (ENGINE_REGS[15] & 0x1 != 0) {}  // wait for reset
+		// Clear Execute
+		ENGINE_REGS[7] = 0;
+		while ((ENGINE_REGS[15] & 0x1) != 0) {}  // wait for reset
+	}
+//    printf("Graphic engine done!\n");
 
     ENGINE_REGS[0] = start_x;
     ENGINE_REGS[1] = end_x;
