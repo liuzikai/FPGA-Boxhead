@@ -142,9 +142,10 @@ ACDS_VERSION := 18.1
 ELF := boxhead.elf
 
 # Paths to C, C++, and assembly source files.
-C_SRCS += io_handler.c
 C_SRCS += main.c
-C_SRCS += usb.c
+C_SRCS += keyboard/io_handler.c
+C_SRCS += keyboard/keyboard.c
+C_SRCS += keyboard/usb.c
 CXX_SRCS :=
 ASM_SRCS :=
 

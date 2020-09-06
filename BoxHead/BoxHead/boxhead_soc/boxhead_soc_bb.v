@@ -8,6 +8,7 @@ module boxhead_soc (
 	copy_engine_export_data_program_write,
 	copy_engine_export_data_program_data,
 	copy_engine_export_data_palette_index,
+	copy_engine_export_data_current_frame,
 	key_wire_export,
 	keycode_export,
 	otg_hpi_address_export,
@@ -37,6 +38,7 @@ module boxhead_soc (
 	output		copy_engine_export_data_program_write;
 	output	[15:0]	copy_engine_export_data_program_data;
 	output	[1:0]	copy_engine_export_data_palette_index;
+	input		copy_engine_export_data_current_frame;
 	input	[3:0]	key_wire_export;
 	output	[7:0]	keycode_export;
 	output	[1:0]	otg_hpi_address_export;

@@ -12,6 +12,7 @@ module boxhead_soc (
 		output wire        copy_engine_export_data_program_write, //                        .program_write
 		output wire [15:0] copy_engine_export_data_program_data,  //                        .program_data
 		output wire [1:0]  copy_engine_export_data_palette_index, //                        .palette_index
+		input  wire        copy_engine_export_data_current_frame, //                        .current_frame
 		input  wire [3:0]  key_wire_export,                       //                key_wire.export
 		output wire [7:0]  keycode_export,                        //                 keycode.export
 		output wire [1:0]  otg_hpi_address_export,                //         otg_hpi_address.export
@@ -153,7 +154,8 @@ module boxhead_soc (
 		.program_x     (copy_engine_export_data_program_x),                               //                  .program_x
 		.program_write (copy_engine_export_data_program_write),                           //                  .program_write
 		.program_data  (copy_engine_export_data_program_data),                            //                  .program_data
-		.palette_index (copy_engine_export_data_palette_index)                            //                  .palette_index
+		.palette_index (copy_engine_export_data_palette_index),                           //                  .palette_index
+		.current_frame (copy_engine_export_data_current_frame)                            //                  .current_frame
 	);
 
 	boxhead_soc_jtag_uart_0 jtag_uart_0 (

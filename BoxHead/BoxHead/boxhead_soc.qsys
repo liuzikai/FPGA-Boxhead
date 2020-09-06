@@ -9,6 +9,14 @@
    categories="System" />
  <parameter name="bonusData"><![CDATA[bonusData 
 {
+   element boxhead_soc
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone IV E";
+         type = "String";
+      }
+   }
    element clk_0
    {
       datum _sortIndex
@@ -592,7 +600,7 @@
    version="18.1"
    enabled="1">
   <parameter name="allowInSystemMemoryContentEditor" value="false" />
-  <parameter name="autoInitializationFileName">boxhead_soc_onchip_memory2_0</parameter>
+  <parameter name="autoInitializationFileName">$${FILENAME}_onchip_memory2_0</parameter>
   <parameter name="blockType" value="AUTO" />
   <parameter name="copyInitFile" value="false" />
   <parameter name="dataWidth" value="32" />
@@ -728,7 +736,7 @@
   <parameter name="casLatency" value="3" />
   <parameter name="clockRate" value="50000000" />
   <parameter name="columnWidth" value="10" />
-  <parameter name="componentName" value="boxhead_soc_sdram" />
+  <parameter name="componentName" value="$${FILENAME}_sdram" />
   <parameter name="dataWidth" value="32" />
   <parameter name="generateSimulationModel" value="false" />
   <parameter name="initNOPDelay" value="0.0" />

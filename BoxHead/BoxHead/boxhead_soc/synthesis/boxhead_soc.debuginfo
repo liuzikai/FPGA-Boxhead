@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <EnsembleReport name="boxhead_soc" kind="system" version="18.1" fabric="QSYS">
  <!-- Format version 18.1 625 (Future versions may contain additional information.) -->
- <!-- 2020.09.06.02:31:12 -->
+ <!-- 2020.09.06.15:09:35 -->
  <!-- A collection of modules and connections -->
  <parameter name="clockCrossingAdapter">
   <type>com.altera.sopcmodel.ensemble.EClockAdapter</type>
@@ -53,7 +53,7 @@
  </parameter>
  <parameter name="generationId">
   <type>int</type>
-  <value>1599327021</value>
+  <value>1599372534</value>
   <derived>false</derived>
   <enabled>true</enabled>
   <visible>true</visible>
@@ -1144,6 +1144,12 @@ parameters are a RESULT of the module parameters. -->
     <direction>Output</direction>
     <width>2</width>
     <role>palette_index</role>
+   </port>
+   <port>
+    <name>current_frame</name>
+    <direction>Input</direction>
+    <width>1</width>
+    <role>current_frame</role>
    </port>
   </interface>
  </module>
@@ -15067,7 +15073,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>embeddedsw.CMacro.TIMESTAMP</name>
-   <value>1599327021</value>
+   <value>1599372534</value>
   </assignment>
   <assignment>
    <name>embeddedsw.dts.compatible</name>
@@ -15087,7 +15093,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>embeddedsw.dts.params.timestamp</name>
-   <value>1599327021</value>
+   <value>1599372534</value>
   </assignment>
   <assignment>
    <name>embeddedsw.dts.vendor</name>
@@ -15103,7 +15109,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="timestamp">
    <type>int</type>
-   <value>1599327021</value>
+   <value>1599372534</value>
    <derived>true</derived>
    <enabled>false</enabled>
    <visible>false</visible>
@@ -25685,5 +25691,5 @@ parameters are a RESULT of the module parameters. -->
   <version>18.1</version>
  </plugin>
  <reportVersion>18.1 625</reportVersion>
- <uniqueIdentifier>001C42FEB947000001745F51D067</uniqueIdentifier>
+ <uniqueIdentifier>001C42FEB9470000017462084973</uniqueIdentifier>
 </EnsembleReport>

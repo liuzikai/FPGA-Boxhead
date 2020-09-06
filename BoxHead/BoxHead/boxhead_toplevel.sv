@@ -104,7 +104,7 @@ module boxhead_toplevel(
 
     // SRAM controller
     sram_controller sram_controller (
-        .background_data(16'b0000000000000000),
+        .background_data(16'b1101111001111001),
         .*
     );
 

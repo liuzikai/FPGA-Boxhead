@@ -2,7 +2,7 @@
 #include "io_handler.h"
 #include <stdio.h>
 
-void IO_init(void)
+void io_init(void)
 {
 	*otg_hpi_reset = 1;
 	*otg_hpi_cs = 1;
@@ -28,7 +28,7 @@ void IO_init(void)
  * @note     None
  *
  ******************************************************************************/
-void IO_write(alt_u8 Address, alt_u16 Data)
+void io_write(alt_u8 Address, alt_u16 Data)
 {
 	*otg_hpi_address = Address;
 	*otg_hpi_cs = 0; // Set chip select
@@ -48,7 +48,7 @@ void IO_write(alt_u8 Address, alt_u16 Data)
  * @note     None
  *
  ******************************************************************************/
-alt_u16 IO_read(alt_u8 Address)
+alt_u16 io_read(alt_u8 Address)
 {
 	alt_u16 temp;
 	*otg_hpi_address = Address;

@@ -47,7 +47,7 @@
 * @note     None
 *
 ******************************************************************************/
-void UsbWrite(alt_u16 Address, alt_u16 Data);
+void usb_write(alt_u16 Address, alt_u16 Data);
 
 /*****************************************************************************/
 /**
@@ -62,7 +62,7 @@ void UsbWrite(alt_u16 Address, alt_u16 Data);
 * @note     None
 *
 ******************************************************************************/
-alt_u16 UsbRead(alt_u16 Address);
+alt_u16 usb_read(alt_u16 Address);
 
 /*****************************************************************************/
 /**
@@ -77,21 +77,21 @@ alt_u16 UsbRead(alt_u16 Address);
 * @note     None
 *
 ******************************************************************************/
-void UsbSoftReset();
+void usb_soft_reset();
 
-void UsbSetAddress();		// Set Address
-void UsbGetDeviceDesc1(); 	// Get Device Descriptor -1
-void UsbGetDeviceDesc2(); 	// Get Device Descriptor -2
-void UsbGetConfigDesc1(); 	// Get Configuration Descriptor -1
-void UsbGetConfigDesc2(); 	// Get Configuration Descriptor -2
-void UsbSetConfig();		// Set Configuration
-void UsbClassRequest();		// Class Request
-void UsbGetHidDesc();		// Get HID Descriptor
-void UsbGetReportDesc();	// Get Report Descriptor
+void usb_set_address();		// Set Address
+void usb_get_device_desc1(); 	// Get Device Descriptor -1
+void usb_get_device_desc2(); 	// Get Device Descriptor -2
+void usb_get_config_desc1(); 	// Get Configuration Descriptor -1
+void usb_get_config_desc2(); 	// Get Configuration Descriptor -2
+void usb_set_config();		// Set Configuration
+void usb_class_request();		// Class Request
+void usb_get_hid_desc();		// Get HID Descriptor
+void usb_get_report_desc();	// Get Report Descriptor
 
-alt_u16 UsbWaitTDListDone();	// Check and wait until HUSB_TDListDone is read from HPI Data
-alt_u16 UsbGetRetryCnt();		// Get RetryCnt for sending the TD
+alt_u16 usb_wait_td_list_done();	// Check and wait until HUSB_TDListDone is read from HPI Data
+alt_u16 usb_get_retry_cnt();		// Get RetryCnt for sending the TD
 
-void UsbPrintMem();			// Print the memory contents of EZ-OTG
+void usb_print_mem();			// Print the memory contents of EZ-OTG
 
 #endif /* USB_H_ */

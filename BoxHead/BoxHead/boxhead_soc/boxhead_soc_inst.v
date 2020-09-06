@@ -7,6 +7,7 @@
 		.copy_engine_export_data_program_write (<connected-to-copy_engine_export_data_program_write>), //                        .program_write
 		.copy_engine_export_data_program_data  (<connected-to-copy_engine_export_data_program_data>),  //                        .program_data
 		.copy_engine_export_data_palette_index (<connected-to-copy_engine_export_data_palette_index>), //                        .palette_index
+		.copy_engine_export_data_current_frame (<connected-to-copy_engine_export_data_current_frame>), //                        .current_frame
 		.key_wire_export                       (<connected-to-key_wire_export>),                       //                key_wire.export
 		.keycode_export                        (<connected-to-keycode_export>),                        //                 keycode.export
 		.otg_hpi_address_export                (<connected-to-otg_hpi_address_export>),                //         otg_hpi_address.export

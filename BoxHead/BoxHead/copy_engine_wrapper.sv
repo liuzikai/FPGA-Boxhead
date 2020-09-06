@@ -9,6 +9,8 @@ Register Map:
  3: 10-bit dest_y_end (exclusive)
  4: src_addr_start
  5: palette (character) index
+ 6: flip_x (0 or 1)
+14: current_frame (0 or 1, read-only)
 15: 1-bit execute/status
     Set to 1 to start execute
     Set to 0 to force terminate
@@ -33,11 +35,12 @@ module copy_engine_wrapper (
     output logic [19:0] src_addr,
     input  logic [15:0] src_data,
 
-    // Data to SRAM controller
+    // Wires between SRAM controller
     output logic [9:0]  program_x,
                         program_y,
     output logic [15:0] program_data,
     output logic        program_write,
+    input  logic        current_frame,
 
     // Output to upper level
     output logic [1:0]  palette_index
@@ -50,6 +53,7 @@ module copy_engine_wrapper (
     logic [31:0] reg_in[16];
     logic [9:0] dest_x_start, dest_x_end, dest_y_start, dest_y_end;
     logic [19:0] src_addr_start;
+    logic flip_x;
     logic execute;
     logic done;
 
@@ -62,7 +66,7 @@ module copy_engine_wrapper (
     always_ff @ (posedge CLK) for (int i = 0; i < 16; ++i) regs[i] <= reg_in[i];
 
     always_comb begin
-        for (int i = 0; i <= 5; i++)
+        for (int i = 0; i <= 6; i++)
         begin
             reg_in[i] = regs[i];  // pre-assign all bytes
             if (AVL_CS == 1'b1 && AVL_WRITE == 1'b1  && AVL_ADDR == i) begin
@@ -74,7 +78,9 @@ module copy_engine_wrapper (
             end
         end
 
-        for (int i = 6; i <= 14; i++) reg_in[i] = 32'b0;
+        for (int i = 7; i <= 13; i++) reg_in[i] = 32'b0;
+
+        reg_in[14] = {31'b0, current_frame};
 
         if (execute == 1'b1 && done == 1'b1) begin
             // Automatically set execute back to 0, which will also reset copy engine
@@ -96,6 +102,7 @@ module copy_engine_wrapper (
     assign dest_y_end = regs[3][9:0];
     assign src_addr_start = regs[4][19:0];
     assign palette_index = regs[5][1:0];
+    assign flip_x = regs[6][0];
     assign execute = regs[15][0];
 
 endmodule
