@@ -34,7 +34,7 @@ alt_u16 fs_device = 0;
 alt_u8 data_size;
 alt_u8 hot_plug_count;
 alt_u16 code;
-alt_u8 toggle = 0;
+alt_u8 fetch_toggle = 0;
 
 void keyboard_init() {
     io_init();
@@ -59,9 +59,9 @@ void keyboard_init() {
     usb_write(HOST1_STAT_REG, 0xFFFF);
 
     /* Set HUSB_pEOT time */
-    usb_write(HUSB_pEOT, 600); // adjust the according to your USB device speed
+    usb_write(HUSB_pEOT, 600);  // adjust the according to your USB device speed
 
-    usb_ctl_val = SOFEOP1_TO_CPU_EN | RESUME1_TO_HPI_EN;// | SOFEOP1_TO_HPI_EN;
+    usb_ctl_val = SOFEOP1_TO_CPU_EN | RESUME1_TO_HPI_EN;  // | SOFEOP1_TO_HPI_EN;
     usb_write(HPI_IRQ_ROUTING_REG, usb_ctl_val);
 
     intStat = A_CHG_IRQ_EN | SOF_EOP_IRQ_EN;
@@ -69,7 +69,7 @@ void keyboard_init() {
     // STEP 1a end
 
     // STEP 1b begin
-    usb_write(COMM_R0, 0x0000);// reset time
+    usb_write(COMM_R0, 0x0000);  // reset time
     usb_write(COMM_R1, 0x0000);  // port number
     usb_write(COMM_R2, 0x0000);  // r1
     usb_write(COMM_R3, 0x0000);  // r1
@@ -83,7 +83,7 @@ void keyboard_init() {
     usb_write(COMM_R11, 0x0000);  // r1
     usb_write(COMM_R12, 0x0000);  // r1
     usb_write(COMM_R13, 0x0000);  // r1
-    usb_write(COMM_INT_NUM, HUSB_SIE1_INIT_INT); // HUSB_SIE1_INIT_INT
+    usb_write(COMM_INT_NUM, HUSB_SIE1_INIT_INT);  // HUSB_SIE1_INIT_INT
     io_write(HPI_MAILBOX, COMM_EXEC_INT);
 
     while (!(io_read(HPI_STATUS) & 0xFFFF)) {} // read sie1 msg register
@@ -95,8 +95,8 @@ void keyboard_init() {
 
     printf("STEP 1 Complete");
     // STEP 2 begin
-    usb_write(COMM_INT_NUM, HUSB_RESET_INT); // husb reset
-    usb_write(COMM_R0, 0x003c);// reset time
+    usb_write(COMM_INT_NUM, HUSB_RESET_INT);  // husb reset
+    usb_write(COMM_R0, 0x003c);  // reset time
     usb_write(COMM_R1, 0x0000);  // port number
     usb_write(COMM_R2, 0x0000);  // r1
     usb_write(COMM_R3, 0x0000);  // r1
@@ -162,10 +162,10 @@ void keyboard_init() {
 
     usb_wait_td_list_done();
 
-    io_write(HPI_ADDR, 0x0506); // i
+    io_write(HPI_ADDR, 0x0506);  // i
     printf("[ENUM PROCESS]:step 3 TD Status Byte is %x\n", io_read(HPI_DATA));
 
-    io_write(HPI_ADDR, 0x0508); // n
+    io_write(HPI_ADDR, 0x0508);  // n
     usb_ctl_val = io_read(HPI_DATA);
     printf("[ENUM PROCESS]:step 3 TD Control Byte is %x\n", usb_ctl_val);
     while (usb_ctl_val != 0x03) // retries occurred
@@ -317,10 +317,10 @@ void keyboard_init() {
     io_write(HPI_DATA, 0x0003);
     io_write(HPI_DATA, 0x0008);
     io_write(HPI_DATA, 0xAC0A);
-    usb_write(HUSB_SIE1_pCurrentTDPtr, 0x0576); // HUSB_SIE1_pCurrentTDPtr
+    usb_write(HUSB_SIE1_pCurrentTDPtr, 0x0576);  // HUSB_SIE1_pCurrentTDPtr
 
     // data_size = (io_read(HPI_DATA)>>8)&0x0ff;
-    // data_size = 0x08;//(io_read(HPI_DATA))&0x0ff;
+    // data_size = 0x08;  //(io_read(HPI_DATA))&0x0ff;
     // usb_print_mem();
     io_write(HPI_ADDR, 0x057c);
     data_size = (io_read(HPI_DATA)) & 0x0ff;
@@ -432,55 +432,64 @@ void keyboard_init() {
     usleep(10000);
 }
 
-int keyboard_fetch(alt_u16 *keycode) {
-    toggle++;
+int keyboard_fetch(alt_u16 *keycode_ptr) {
 
-    io_write(HPI_ADDR, 0x0500); // the start address
+    fetch_toggle = 1 - fetch_toggle;
+
+    io_write(HPI_ADDR, 0x0500);  // the start address
     // data phase IN-1
-    io_write(HPI_DATA, 0x051c); // 500
+    io_write(HPI_DATA, 0x051c);  // 500
 
-    io_write(HPI_DATA, 0x000f & data_size); // 2 data length
+    io_write(HPI_DATA, 0x000f & data_size);  // 2 data length
 
-    io_write(HPI_DATA, 0x0291);// 4 // endpoint 1
-    if (toggle % 2) {
-        io_write(HPI_DATA, 0x0001);// 6 // data 1
+    io_write(HPI_DATA, 0x0291);  // 4 // endpoint 1
+    if (fetch_toggle) {
+        io_write(HPI_DATA, 0x0001);  // 6 // data 1
     } else {
-        io_write(HPI_DATA, 0x0041);// 6 // data 1
+        io_write(HPI_DATA, 0x0041);  // 6 // data 1
     }
-    io_write(HPI_DATA, 0x0013);// 8
-    io_write(HPI_DATA, 0x0000);// a
-    usb_write(HUSB_SIE1_pCurrentTDPtr, 0x0500); // HUSB_SIE1_pCurrentTDPtr
+    io_write(HPI_DATA, 0x0013);  // 8
+    io_write(HPI_DATA, 0x0000);  // a
+    usb_write(HUSB_SIE1_pCurrentTDPtr, 0x0500);  // HUSB_SIE1_pCurrentTDPtr
 
     while (!(io_read(HPI_STATUS) & HPI_STATUS_SIE1msg_FLAG))  // read sie1 msg register
     {
-        io_write(HPI_ADDR, 0x0500); // the start address
+        io_write(HPI_ADDR, 0x0500);  // the start address
         // data phase IN-1
-        io_write(HPI_DATA, 0x051c); // 500
+        io_write(HPI_DATA, 0x051c);  // 500
 
-        io_write(HPI_DATA, 0x000f & data_size);// 2 data length
+        io_write(HPI_DATA, 0x000f & data_size);  // 2 data length
 
-        io_write(HPI_DATA, 0x0291);// 4 // endpoint 1
-        if (toggle % 2) {
-            io_write(HPI_DATA, 0x0001);// 6 // data 1
+        io_write(HPI_DATA, 0x0291);  // 4 // endpoint 1
+
+        if (fetch_toggle) {
+            io_write(HPI_DATA, 0x0001);  // 6 // data 1
         } else {
-            io_write(HPI_DATA, 0x0041);// 6 // data 1
+            io_write(HPI_DATA, 0x0041);  // 6 // data 1
         }
-        io_write(HPI_DATA, 0x0013);// 8
-        io_write(HPI_DATA, 0x0000);//
-        usb_write(HUSB_SIE1_pCurrentTDPtr, 0x0500); // HUSB_SIE1_pCurrentTDPtr
-        usleep(10 * 1000);
+
+        io_write(HPI_DATA, 0x0013);  // 8
+        io_write(HPI_DATA, 0x0000);  //
+        usb_write(HUSB_SIE1_pCurrentTDPtr, 0x0500);  // HUSB_SIE1_pCurrentTDPtr
+
+        // NOTE: [liuzikai] disable this sleep so that this procesure won't take too long
+        // usleep(10 * 1000);
     }
 
     usb_ctl_val = usb_wait_td_list_done();
 
     // The first two keycodes are stored in 0x051E. Other keycodes are in  subsequent addresses.
-    *keycode = usb_read(0x051e);
-    printf("\nThe first two keycode values are %04x\n", *keycode);
+    *keycode_ptr = usb_read(0x051e);
+
+    // printf("\nThe first two keycode values are %04x\n", *keycode);
+
     // We only need the first keycode, which is at the lower byte of keycode.
     // Send the keycode to hardware via PIO.
-    *keycode_base = *keycode & 0xffu;
+    *keycode_base = *keycode_ptr & 0xffu;
 
-    usleep(200);// usleep(5000);
+    // NOTE: [liuzikai] disable hot plug function to reduce the time consumption
+
+    /* usleep(200);  // usleep(5000);
     usb_ctl_val = usb_read(ctl_reg);
 
     if (!(usb_ctl_val & no_device)) {
@@ -495,7 +504,7 @@ int keyboard_fetch(alt_u16 *keycode) {
             printf("[INFO]: please insert again!!! \n");
             return 1;
         }
-    }
+    } */
 
     return 0;
 }

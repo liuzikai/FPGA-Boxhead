@@ -21,6 +21,7 @@ def enum_files(input_dir: str) -> map:
         ret[relpath.replace("/", "_")[:-4]] = relpath
     return {k: v for k, v in sorted(ret.items(), key=lambda item: item[1])}
 
+
 RESIZE_FACTOR = 0.3
 ALPHA_THRESHOLD = 150
 TRANSPARENT_COLOR = 0x07E0

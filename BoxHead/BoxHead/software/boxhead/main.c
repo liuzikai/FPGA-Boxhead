@@ -32,7 +32,7 @@ int main() {
     unsigned int width, height, half_width, half_height;
 
     while (1) {
-    	direction = 0;
+
         width = zombie_width[direction];
         height = zombie_height[direction];
         half_width = width / 2;
@@ -42,16 +42,16 @@ int main() {
              320 + (width - half_width), 
              240 - half_height, 
              240 + (height - half_height), 
-             zombie_offset[direction] + 0 * width * height, 
+             zombie_offset[direction] + frame_index * width * height,
              0, 
              zombie_flip_x[direction]);
 
-//        if (keyboard_fetch(&keycode) != 0) {  // failed to fetch keycode
-//            keycode = 0;
+        if (keyboard_fetch(&keycode) != 0) {  // failed to fetch keycode
+            keycode = 0;
 //            if (keyboard_hot_plugged()) {
 //                keyboard_init();
 //            }
-//        }
+        }
 
         // Extract keys
         for (int key = 0; key < 4; key++) {
@@ -66,12 +66,12 @@ int main() {
         printf("%d, %d, %d, %d\n", dkey_pressed[0], dkey_pressed[1], dkey_pressed[2], dkey_pressed[3]);
 
         for (int key = 0; key < 4; key++) {
+        	if (dkey_pressed[key] == 1 && dkey_pressed[(key + 1) % 4] == 1) {
+				direction = key * 2 + 1;
+				break;
+			}
             if (dkey_pressed[key] == 1 && dkey_pressed[(key + 1) % 4] == 0) {
                 direction = key * 2;
-                break;
-            }
-            if (dkey_pressed[key] == 1 && dkey_pressed[(key + 1) % 4] == 1) {
-                direction = key * 2 + 1;
                 break;
             }
         }
