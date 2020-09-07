@@ -8,6 +8,7 @@
 #include "keyboard/keyboard.h"
 #include "graphic/graphic_engine.h"
 #include "graphic/resource.h"
+#include "game_logic.h"
 
 static const unsigned char dkey_keycode[4] = {
     26,  // W
