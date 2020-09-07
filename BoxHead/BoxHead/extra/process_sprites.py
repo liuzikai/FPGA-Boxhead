@@ -21,10 +21,11 @@ def enum_files(input_dir: str) -> map:
         ret[relpath.replace("/", "_")[:-4]] = relpath
     return {k: v for k, v in sorted(ret.items(), key=lambda item: item[1])}
 
-RESIZE_FACTOR = 0.5
+
+RESIZE_FACTOR = 0.3
 ALPHA_THRESHOLD = 150
 TRANSPARENT_COLOR = 0x07E0
-PALETTE_WIDTH = 4
+PALETTE_WIDTH = 16
 PALETTE_SIZE = (1 << PALETTE_WIDTH)
 
 def run(input_dir: str) -> None:
@@ -38,7 +39,7 @@ def run(input_dir: str) -> None:
     images = {}
     for png_name, png_relpath in png_files.items():
          img = Image.open(os.path.join(input_dir, png_relpath)).convert("RGBA")
-         img = img.resize((int(img.size[0] * RESIZE_FACTOR), int(img.size[1] * RESIZE_FACTOR)), Image.ANTIALIAS)
+         img = img.resize((int(img.size[0] * RESIZE_FACTOR), int(img.size[1] * RESIZE_FACTOR)))
          images[png_name] = img
 
     color_counts = {}
@@ -94,20 +95,26 @@ def run(input_dir: str) -> None:
                     color = TRANSPARENT_COLOR
                 else:
                     color = rgb_to_16bit((r, g, b))
-
-                index = kd_tree.query(revert_to_rgb(color))[1]
                 
-                buf = buf << 4 | index
+                output_file.write("%04X\n" % color)
+
+                out_image.putpixel((x,y), revert_to_rgb(color))
+
                 offset += 1
-                if offset % 4 == 0:
-                    output_file.write("\n")
-                    output_file.write("%04X" % buf)
-                    buf = 0
+
+                # index = kd_tree.query(revert_to_rgb(color))[1]
+                
+                # buf = buf << 4 | index
+                # offset += 1
+                # if offset % 4 == 0:
+                #     output_file.write("\n")
+                #     output_file.write("%04X" % buf)
+                #     buf = 0
                 
                 # output_file.write("%X " % index)
                 # offset += 1
 
-                out_image.putpixel((x,y), revert_to_rgb(palette[index]))
+                # out_image.putpixel((x,y), revert_to_rgb(palette[index]))
 
         out_image_filename = os.path.join(out_dir, png_relpath)
         os.makedirs(os.path.dirname(out_image_filename), exist_ok=True)

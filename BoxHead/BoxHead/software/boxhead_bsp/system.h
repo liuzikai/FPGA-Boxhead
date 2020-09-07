@@ -4,7 +4,7 @@
  * Machine generated for CPU 'nios2_gen2_0' in SOPC Builder design 'boxhead_soc'
  * SOPC Builder design path: ../../boxhead_soc.sopcinfo
  *
- * Generated: Sat Sep 05 23:12:20 IRKT 2020
+ * Generated: Sun Sep 06 23:28:54 IRKT 2020
  */
 
 /*
@@ -180,17 +180,17 @@
 
 
 /*
- * copy_engine configuration
+ * copy_engine_core configuration
  *
  */
 
-#define ALT_MODULE_CLASS_copy_engine Copy_Engine
-#define COPY_ENGINE_BASE 0x40
-#define COPY_ENGINE_IRQ -1
-#define COPY_ENGINE_IRQ_INTERRUPT_CONTROLLER_ID -1
-#define COPY_ENGINE_NAME "/dev/copy_engine"
-#define COPY_ENGINE_SPAN 64
-#define COPY_ENGINE_TYPE "Copy_Engine"
+#define ALT_MODULE_CLASS_copy_engine_core Copy_Engine
+#define COPY_ENGINE_CORE_BASE 0x40
+#define COPY_ENGINE_CORE_IRQ -1
+#define COPY_ENGINE_CORE_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define COPY_ENGINE_CORE_NAME "/dev/copy_engine_core"
+#define COPY_ENGINE_CORE_SPAN 64
+#define COPY_ENGINE_CORE_TYPE "Copy_Engine"
 
 
 /*
@@ -532,7 +532,7 @@
 #define SYSID_QSYS_0_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define SYSID_QSYS_0_NAME "/dev/sysid_qsys_0"
 #define SYSID_QSYS_0_SPAN 8
-#define SYSID_QSYS_0_TIMESTAMP 1599314752
+#define SYSID_QSYS_0_TIMESTAMP 1599401991
 #define SYSID_QSYS_0_TYPE "altera_avalon_sysid_qsys"
 
 #endif /* __SYSTEM_H_ */

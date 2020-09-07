@@ -65,6 +65,7 @@ module copy_engine_unit_test (
 
     logic copy_engine_execute;
     logic copy_engine_done;
+    logic current_frame;
 
     copy_engine #(SrcAddrWidth) copy_engine (
         .dest_x_start(470),
@@ -74,6 +75,7 @@ module copy_engine_unit_test (
         .src_addr_start(0),
         .execute(copy_engine_execute),
         .done(copy_engine_done),
+        .flip_x(1'b1),
         .*
     );
 

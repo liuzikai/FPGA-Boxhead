@@ -2,10 +2,10 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>Sep 5, 2020 11:12:17 PM</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1599315137993</BspGeneratedUnixTimeStamp>
+        <BspGeneratedTimeStamp>Sep 6, 2020 11:28:52 PM</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1599402532808</BspGeneratedUnixTimeStamp>
         <BspGeneratedLocation>X:\BoxHead\BoxHead\software\boxhead_bsp</BspGeneratedLocation>
-        <BspSettingsFile>.\settings.bsp</BspSettingsFile>
+        <BspSettingsFile>settings.bsp</BspSettingsFile>
         <SopcDesignFile>..\..\boxhead_soc.sopcinfo</SopcDesignFile>
         <JdiFile>default</JdiFile>
         <Cpu>nios2_gen2_0</Cpu>
@@ -917,7 +917,7 @@
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
-                <slaveDescriptor>copy_engine</slaveDescriptor>
+                <slaveDescriptor>copy_engine_core</slaveDescriptor>
                 <addressRange>0x00000040 - 0x0000007F</addressRange>
                 <addressSpan>64</addressSpan>
                 <attributes/>
