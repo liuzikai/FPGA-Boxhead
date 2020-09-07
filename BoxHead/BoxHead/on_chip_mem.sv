@@ -28,11 +28,11 @@ module on_chip_mem_core (
     output logic [15:0] data_out
 );
     
-    logic [15:0] mem [0:48823];
+    logic [15:0] mem [0:222090];
     
     initial
     begin
-         $readmemh("resource/zombie_walk_out/output.txt", mem);
+         $readmemh("resource/BoxHead/ocm.txt", mem);
     end
     
     
