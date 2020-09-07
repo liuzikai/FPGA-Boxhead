@@ -478,8 +478,11 @@ int keyboard_fetch(alt_u16 *keycode_ptr) {
 
     usb_ctl_val = usb_wait_td_list_done();
 
-    // The first two keycodes are stored in 0x051E. Other keycodes are in  subsequent addresses.
+    // The first two keycodes are stored in 0x051E. Other keycodes are in subsequent addresses.
     *keycode_ptr = usb_read(0x051e);
+    *(keycode_ptr + 1) = usb_read(0x051f);
+    *(keycode_ptr + 2) = usb_read(0x0520);
+    *(keycode_ptr + 3) = usb_read(0x0521);
 
     // printf("\nThe first two keycode values are %04x\n", *keycode);
 

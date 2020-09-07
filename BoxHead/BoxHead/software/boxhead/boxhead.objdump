@@ -111,7 +111,7 @@ SYMBOL TABLE:
 00000000 l    df *ABS*	00000000 keyboard.c
 00000000 l    df *ABS*	00000000 usb.c
 00000000 l    df *ABS*	00000000 main.c
-1001441c l     O .rwdata	00000004 dkey_keycode
+1001441c l     O .rwdata	00000004 DKEY_KEYCODE
 00000000 l    df *ABS*	00000000 lib2-mul.c
 00000000 l    df *ABS*	00000000 printf.c
 00000000 l    df *ABS*	00000000 puts.c
@@ -4602,7 +4602,7 @@ int main() {
             for (int i = 0; i < 2; i++) {
 10002568:	e03ff315 	stw	zero,-52(fp)
 1000256c:	00001406 	br	100025c0 <main+0x1d4>
-                if (((keycode >> (8 * i)) & 0xFFU) == dkey_keycode[key]) {
+                if (((keycode >> (8 * i)) & 0xFFU) == DKEY_KEYCODE[key]) {
 10002570:	e0bff90b 	ldhu	r2,-28(fp)
 10002574:	10ffffcc 	andi	r3,r2,65535
 10002578:	e0bff317 	ldw	r2,-52(fp)

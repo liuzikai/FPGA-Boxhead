@@ -10,81 +10,97 @@
 #include "graphic/resource.h"
 #include "game_logic.h"
 
-static const unsigned char dkey_keycode[4] = {
-    26,  // W
-    07,  // D
-    22,  // S
-    04   // A
+static const unsigned char DKEY_KEYCODE_1[4] = {
+        26,  // W
+        07,  // D
+        22,  // S
+        04   // A
 };
+
+static const unsigned char DKEY_KEYCODE_2[4] = {
+        82,  // Up
+        79,  // Right
+        81,  // Down
+        80   // Left
+};
+
+int keys_to_direction(const unsigned char dkey_pressed[]) {
+    if (dkey_pressed[0] && dkey_pressed[1]) return 1;
+    if (dkey_pressed[1] && dkey_pressed[2]) return 3;
+    if (dkey_pressed[2] && dkey_pressed[3]) return 5;
+    if (dkey_pressed[3] && dkey_pressed[0]) return 7;
+    if (dkey_pressed[0]) return 0;
+    if (dkey_pressed[1]) return 2;
+    if (dkey_pressed[2]) return 4;
+    if (dkey_pressed[3]) return 6;
+}
 
 int main() {
 
     keyboard_init();
-	graphic_engine_reset();
+    graphic_engine_reset();
+    init_game();
 
-    alt_u16 keycode;
+    unsigned char keycode[8];
 
-    unsigned int frame_index = 0;
     unsigned int frame_count = 0;
 
-    alt_u8 dkey_pressed[4];  // {up, right, down, left}
+    unsigned char dkey_pressed_1[4];  // {W, D, S, A}
+    unsigned char dkey_pressed_2[4];  // {up, right, down, left}
 
-    unsigned int direction = 0;
-    unsigned int width, height, half_width, half_height;
+    int direction_1, direction_2;
+    int attack_1, attack_2;
 
     while (1) {
 
-        width = zombie_width[direction];
-        height = zombie_height[direction];
-        half_width = width / 2;
-        half_height = height / 2;
+        if (frame_count == 0) {
+            // Fetch keycodes at frame 0
+            if (keyboard_fetch((alt_u16 *) (&keycode)) != 0) {
+                // Failed to fetch keycode
+                for (int i = 0; i < 8; i++) {
+                    keycode[i] = 0;
+                }
+                printf("FAILED TO FETCH KEYCODE!\n");
+            }
 
-        draw(320 - half_width, 
-             320 + (width - half_width), 
-             240 - half_height, 
-             240 + (height - half_height), 
-             zombie_offset[direction] + frame_index * width * height,
-             0, 
-             zombie_flip_x[direction]);
+            // Extract keys
+            direction_1 = direction_2 = -1;
+            for (int key = 0; key < 4; key++) {
+                dkey_pressed_1[key] = dkey_pressed_2[key] = 0;
+                for (int i = 0; i < 8; i++) {
+                    if (keycode[i] == DKEY_KEYCODE_1[key]) {
+                        dkey_pressed_1[key] = 1;
+                    }
+                    if (keycode[i] == DKEY_KEYCODE_2[key]) {
+                        dkey_pressed_2[key] = 1;
+                    }
+                }
+            }
 
-        if (keyboard_fetch(&keycode) != 0) {  // failed to fetch keycode
-            keycode = 0;
-//            if (keyboard_hot_plugged()) {
-//                keyboard_init();
-//            }
-        }
-
-        // Extract keys
-        for (int key = 0; key < 4; key++) {
-            dkey_pressed[key] = 0;
-            for (int i = 0; i < 2; i++) {
-                if (((keycode >> (8 * i)) & 0xFFU) == dkey_keycode[key]) {
-                    dkey_pressed[key] = 1;
+            attack_1 = attack_2 = 0;
+            for (int i = 0; i < 8; i++) {
+                if (keycode[i] == 44) {  // Space
+                    attack_1 = 1;
+                }
+                if (keycode[i] == 40) {  // Enter
+                    attack_2 = 1;
                 }
             }
         }
 
-        printf("%d, %d, %d, %d\n", dkey_pressed[0], dkey_pressed[1], dkey_pressed[2], dkey_pressed[3]);
-
-        for (int key = 0; key < 4; key++) {
-        	if (dkey_pressed[key] == 1 && dkey_pressed[(key + 1) % 4] == 1) {
-				direction = key * 2 + 1;
-				break;
-			}
-            if (dkey_pressed[key] == 1 && dkey_pressed[(key + 1) % 4] == 0) {
-                direction = key * 2;
-                break;
-            }
+        if (frame_count == 1) {
+            // Update game state at frame 1
+            refresh(1, direction_1, direction_2, attack_1, attack_2);
+        } else {
+            // For other frames, only draw
+            refresh(0, direction_1, direction_2, attack_1, attack_2);
         }
 
-        printf("%d\n", direction);
-
-        ++frame_count;
+        frame_count++;
         if (frame_count == 8) {
-        	frame_count = 0;
-        	++frame_index;
-        	if (frame_index == 8) frame_index = 0;
+            frame_count = 0;
         }
+
 
         wait_for_next_frame();
     }

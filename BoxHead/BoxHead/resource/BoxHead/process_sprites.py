@@ -23,12 +23,13 @@ TRANSPARENT_COLOR = 0x07E0
 FRAMES = {
     "zombie_walk": [1, 2, 3, 4, 5, 6, 7, 8],
     "zombie_hit_front": [1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2],
-    "zombie_hit_back": [1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2],
+    # "zombie_hit_back": [1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2],
     "zombie_die": [1, 2, 3, 4, 5, 5, 5, 5, 5, 5, 5],
+    "zombie_attack": [1, 1, 2, 2, 3, 3, 4, 4],
 
     "player_walk": [1, 2, 3, 4, 5, 6, 7, 8],
     "player_hit_front": [1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2],
-    "player_hit_back": [1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2],
+    # "player_hit_back": [1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2],
     "player_die": [1, 2, 3, 4, 5, 5, 5, 5, 5, 5, 5],
 }
 
@@ -134,7 +135,7 @@ def run() -> None:
     for action, ids in FRAMES.items():
 
         for param in ["width", "height", "flip_x"]:
-            def_file.write("static unsigned int %s_%s[8] = {  // [direction]\n" % (action, param))
+            def_file.write("static int %s_%s[8] = {  // [direction]\n" % (action.upper(), param.upper()))
             def_file.write("    ")
             def_file.write(", ".join([str(img_data[action][direction][param]) for direction in DIRECTIONS]))
             def_file.write("\n};\n")
@@ -150,9 +151,9 @@ def run() -> None:
                     "0x%05X" % (dirc_data["offset"] + (img_id - 1) * dirc_data["width"] * dirc_data["height"])
                 )
 
-            lines.append("    [%s]" % (", ".join(frame_offset_str)))
+            lines.append("    {%s}" % (", ".join(frame_offset_str)))
 
-        def_file.write("static unsigned int %s_offset[8][%d] = {  // [direction][frame_index]\n" % (action, len(ids)))
+        def_file.write("static int %s_OFFSET[8][%d] = {  // [direction][frame_index]\n" % (action.upper(), len(ids)))
         def_file.write(",\n".join(lines))
         def_file.write("\n};\n")
         def_file.write("\n\n")
