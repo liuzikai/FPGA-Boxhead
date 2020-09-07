@@ -79,13 +79,10 @@ static int grid[GRID_X_COUNT][GRID_Y_COUNT];  // index
 static zombie_t zombie[MAX_ZOMBIES_ON_SCREEN];
 static player_t player_1, player_2;
 
-static int time_counter = 0;
 static int zombie_appear_counter = 0;
 static int cur_zombie_counter = 0;
 
 /**
- * This function determines the position of the zombies
- * Directions about the zombies
  * 7 0 1
  * 6   2
  * 5 4 3
@@ -192,7 +189,7 @@ void update_zombie(zombie_t *z) {
             // Initiate attack if player is at the front
             if (face_grid_x >= 0 && face_grid_x < GRID_X_COUNT &&
                 face_grid_y >= 0 && face_grid_y < GRID_Y_COUNT &&
-                grid[face_grid_x][face_grid_x] < 0) {
+                grid[face_grid_x][face_grid_y] < 0) {
 
                 z->action = ATTACK;
                 z->frame = 0;
@@ -203,7 +200,8 @@ void update_zombie(zombie_t *z) {
             if (new_direction == z->direction) {
                 // Do not need to rotate, move
 
-                int new_x = z->x + dx * ZOMBIE_MOVE, new_y = z->y + dy * ZOMBIE_MOVE;
+                int new_x = z->x + dx * ZOMBIE_MOVE;
+                int new_y = z->y + dy * ZOMBIE_MOVE;
                 try_move_zombie(z, new_x, new_y);
 
             } else {
@@ -224,6 +222,7 @@ void update_zombie(zombie_t *z) {
                 z->direction = calc_zombie_direction(z);
                 z->action = WALK;
                 z->frame = 0;
+                return;
             }
             break;
         case ATTACK:
@@ -232,14 +231,14 @@ void update_zombie(zombie_t *z) {
                 // Check whether there is still a player at the facing grid
                 if (face_grid_x >= 0 && face_grid_x < GRID_X_COUNT &&
                     face_grid_y >= 0 && face_grid_y < GRID_Y_COUNT &&
-                    grid[face_grid_x][face_grid_x] < 0) {
+                    grid[face_grid_x][face_grid_y] < 0) {
 
-                    if (grid[face_grid_x][face_grid_x] == INDEX_PLAYER_1) {
+                    if (grid[face_grid_x][face_grid_y] == INDEX_PLAYER_1) {
                         player_1.action = HIT;
                         player_1.blood -= ZOMBIE_ATTACK;
                         player_1.frame = 0;
                         player_1.direction = (z->direction + 4) % 8;  // opposite
-                    } else if (grid[face_grid_x][face_grid_x] == INDEX_PLAYER_2) {
+                    } else if (grid[face_grid_x][face_grid_y] == INDEX_PLAYER_2) {
                         player_2.action = HIT;
                         player_2.blood -= ZOMBIE_ATTACK;
                         player_2.frame = 0;
@@ -248,6 +247,7 @@ void update_zombie(zombie_t *z) {
                 }
                 z->action = WALK;
                 z->frame = 0;
+                return;
             }
             break;
         case HIT:
@@ -313,7 +313,6 @@ void update_player(player_t *p, int direction, int attack) {
 
     int dx = DX[p->direction], dy = DY[p->direction];
     int grid_x = TO_GRID(p->x), grid_y = TO_GRID(p->y);
-    int face_grid_x = grid_x + dx, face_grid_y = grid_y + dy;
 
     if (p->fire_interval > 0) --p->fire_interval;
 
@@ -333,6 +332,10 @@ void update_player(player_t *p, int direction, int attack) {
                     p->frame = 0;
                     return;
                 }
+                p->frame++;
+                if (p->frame >= PLAYER_WALK_FRAME_COUNT) p->frame = 0;
+            } else {
+                p->frame = 0;
             }
 
             if (attack == 1 && p->fire_interval == 0) {
@@ -342,8 +345,7 @@ void update_player(player_t *p, int direction, int attack) {
                     if (gx >= 0 && gx < GRID_X_COUNT && gy >= 0 && gy < GRID_Y_COUNT) {
                         int id = grid[gx][gy];
                         if (id != INDEX_NOTHING) {
-                            if (id < 0) {
-                                // Friend fire
+                            if (id < 0) {  // friend fire
                                 break;  // if not break, it's raygun
                             } else if (zombie[id].action != DIE) {
                                 zombie_t *z = &zombie[id];
@@ -358,9 +360,6 @@ void update_player(player_t *p, int direction, int attack) {
                 }
                 p->fire_interval = PLAYER_FIRE_INTERVAL;
             }
-
-            p->frame++;
-            if (p->frame >= PLAYER_WALK_FRAME_COUNT) p->frame = 0;
 
             break;
         case HIT:
@@ -438,13 +437,13 @@ int try_add_zombie(zombie_t *z) {
         return 1;
     } else {
         z->x = ZOMBIE_BORN_X;
-        z->y = 0;
+        z->y = ZOMBIE_BORN_Y;
         z->enable = 1;
         z->blood = 100;
         z->direction = 4;
         z->action = WALK;
         z->frame = 0;
-        grid[TO_GRID(ZOMBIE_BORN_X)][TO_GRID(ZOMBIE_BORN_Y)] = z->index;
+        grid[TO_GRID(z->x)][TO_GRID(z->y)] = z->index;
         return 0;
     }
 }
@@ -589,7 +588,7 @@ void draw_player(const player_t *p) {
 
 void refresh(int should_update, int direction_1, int direction_2, int attack_1, int attack_2) {
     static int add_zombie_counter = 0;
-    int i, j, gx, gy, id;
+    int i, gx, gy, id;
     for (gy = GRID_Y_COUNT - 1; gy >= 0; gy--) {
         for (gx = 0; gx < GRID_X_COUNT; gx++) {
             id = grid[gx][gy];
