@@ -148,6 +148,7 @@ C_SRCS += keyboard/keyboard.c
 C_SRCS += keyboard/usb.c
 C_SRCS += graphic/graphic_engine.c
 C_SRCS += graphic/resource.c
+C_SRCS += game_logic.c
 CXX_SRCS :=
 ASM_SRCS :=
 

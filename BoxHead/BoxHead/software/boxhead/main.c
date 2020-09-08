@@ -33,6 +33,7 @@ int keys_to_direction(const unsigned char dkey_pressed[]) {
     if (dkey_pressed[1]) return 2;
     if (dkey_pressed[2]) return 4;
     if (dkey_pressed[3]) return 6;
+    return -1;
 }
 
 int main() {
@@ -53,7 +54,7 @@ int main() {
 
     while (1) {
 
-        if (frame_count == 0) {
+//        if (frame_count == 0) {
             // Fetch keycodes at frame 0
             if (keyboard_fetch((alt_u16 *) (&keycode)) != 0) {
                 // Failed to fetch keycode
@@ -64,7 +65,6 @@ int main() {
             }
 
             // Extract keys
-            direction_1 = direction_2 = -1;
             for (int key = 0; key < 4; key++) {
                 dkey_pressed_1[key] = dkey_pressed_2[key] = 0;
                 for (int i = 0; i < 8; i++) {
@@ -76,6 +76,8 @@ int main() {
                     }
                 }
             }
+            direction_1 = keys_to_direction(dkey_pressed_1);
+            direction_2 = keys_to_direction(dkey_pressed_2);
 
             attack_1 = attack_2 = 0;
             for (int i = 0; i < 8; i++) {
@@ -86,20 +88,20 @@ int main() {
                     attack_2 = 1;
                 }
             }
-        }
+//        }
 
-        if (frame_count == 1) {
+//        if (frame_count == 1) {
             // Update game state at frame 1
             refresh(1, direction_1, direction_2, attack_1, attack_2);
-        } else {
+//        } else {
             // For other frames, only draw
-            refresh(0, direction_1, direction_2, attack_1, attack_2);
-        }
+//            refresh(0, direction_1, direction_2, attack_1, attack_2);
+//        }
 
-        frame_count++;
-        if (frame_count == 8) {
-            frame_count = 0;
-        }
+//        frame_count++;
+//        if (frame_count == 2) {
+//            frame_count = 0;
+//        }
 
 
         wait_for_next_frame();

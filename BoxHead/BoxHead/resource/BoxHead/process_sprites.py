@@ -1,7 +1,7 @@
 import os
 import argparse
 from PIL import Image
-from progress.bar import Bar
+# from progress.bar import Bar
 
 
 def rgb_to_16bit(rgb: (int, int, int)) -> int:
@@ -25,7 +25,7 @@ FRAMES = {
     # "zombie_hit_front": [1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2],
     # "zombie_hit_back": [1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2],
     # "zombie_die": [1, 2, 3, 4, 5, 5, 5, 5, 5, 5, 5],
-    "zombie_attack": [1, 1, 2, 2, 3, 3, 4, 4],
+    "zombie_attack": [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4],
 
     "player_walk": [1, 2, 3, 4, 5, 6, 7, 8],
     # "player_hit_front": [1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2],
