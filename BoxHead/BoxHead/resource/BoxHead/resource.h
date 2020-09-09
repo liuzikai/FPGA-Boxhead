@@ -183,8 +183,8 @@ static int PLAYER_DIE_OFFSET[8][11] = {  // [direction][frame_index]
 #define P2_HEIGHT 13
 #define P2_OFFSET 0x28D38
 
-#define WALL_WIDTH 71
-#define WALL_HEIGHT 17
+#define WALL_WIDTH 287
+#define WALL_HEIGHT 70
 #define WALL_OFFSET 0x28DFB
 
 #endif  // RESOURCE_H_
