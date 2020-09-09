@@ -7,10 +7,10 @@
 
 #define DISPLAY_WIDTH  640
 #define DISPLAY_HEIGHT 480
-#define GRID_SIZE      16
+#define GRID_SIZE      32
 #define GRID_X_COUNT   (DISPLAY_WIDTH / GRID_SIZE)
 #define GRID_Y_COUNT   (DISPLAY_HEIGHT / GRID_SIZE)
-#define TO_GRID(n) ((n) / GRID_SIZE)
+#define TO_GRID(n) ((n) >> 5)
 
 #define MIN_X  64
 #define MAX_X  576
@@ -25,7 +25,7 @@
 #define ZOMBIE_BORN_Y (MIN_Y)
 
 #define MAX_TOTAL_ZOMBIES 100     // maximum number of zombies a player need to kill in one game
-#define MAX_ZOMBIES_ON_SCREEN 20  // maximum number of zombies that can appear on the screen
+#define MAX_ZOMBIES_ON_SCREEN 10  // maximum number of zombies that can appear on the screen
 
 #define ZOMBIE_MOVE 1  // moving speed for zombies
 #define PLAYER_MOVE 6  // moving speed for player
@@ -69,11 +69,14 @@ typedef struct {
     action action;
     int frame;
     int fire_interval;
+    int fire_dist;
+    int fire_dist_dx;
+    int fire_dist_dy;
 } player_t;
 
-#define INDEX_NOTHING 255
-#define INDEX_PLAYER_1 -1
-#define INDEX_PLAYER_2 -2
+#define INDEX_NOTHING -1
+#define INDEX_PLAYER_1 254
+#define INDEX_PLAYER_2 255
 
 static int grid[GRID_X_COUNT][GRID_Y_COUNT];  // index
 
@@ -103,15 +106,16 @@ int calc_zombie_direction(zombie_t *z) {
     int delta_x1, delta_y1, delta_x2, delta_y2;
     int closer;
 
+    delta_x1 = TO_GRID(player_1.x) - TO_GRID(z->x);
+    delta_y1 = TO_GRID(player_1.y) - TO_GRID(z->y);
+    delta_x2 = TO_GRID(player_2.x) - TO_GRID(z->x);
+    delta_y2 = TO_GRID(player_2.y) - TO_GRID(z->y);
+
     if (player_1.enable == 0) {
         closer = 2;
     } else if (player_2.enable == 0) {
         closer = 1;
     } else {
-        delta_x1 = TO_GRID(player_1.x) - TO_GRID(z->x);
-        delta_y1 = TO_GRID(player_1.y) - TO_GRID(z->y);
-        delta_x2 = TO_GRID(player_2.x) - TO_GRID(z->x);
-        delta_y2 = TO_GRID(player_2.y) - TO_GRID(z->y);
         if (delta_x1 * delta_x1 + delta_y1 * delta_y1 < delta_x2 * delta_x2 + delta_y2 * delta_y2) {
             closer = 1;
         } else {
@@ -155,16 +159,16 @@ int check_no_interference(int new_x, int new_y, int grid_x, int grid_y) {
         gy = grid_y + DY[d];
         if (gx >= 0 && gx < GRID_X_COUNT && gy >= 0 && gy < GRID_Y_COUNT) {
             id = grid[gx][gy];
-            if (id == INDEX_NOTHING) continue;
-            else if (id > 0) {
-                target_x = zombie[id].x;
-                target_y = zombie[id].y;
-            } else if (id == INDEX_PLAYER_1) {
+            if (id < 0) continue;
+            else if (id == INDEX_PLAYER_1) {
                 target_x = player_1.x;
                 target_y = player_1.y;
-            } else {
+            } else if (id == INDEX_PLAYER_2) {
                 target_x = player_2.x;
                 target_y = player_2.y;
+            } else {
+                target_x = zombie[id].x;
+                target_y = zombie[id].y;
             }
             if (abs(target_x - new_x) < 20 || abs(target_y - new_y) < 20) return 1;
         } 
@@ -200,10 +204,10 @@ void try_move_zombie(zombie_t *z, int new_x, int new_y) {
         return;
     }
 
-    if (check_no_interference(new_x, new_y, grid_x, grid_y) != 0) {
+    // if (check_no_interference(new_x, new_y, grid_x, grid_y) != 0) {
         // Do not move
-        return;
-    }
+        // return;
+    // }
 
     z->x = new_x;
     z->y = new_y;
@@ -226,7 +230,7 @@ void update_zombie(zombie_t *z) {
             // Initiate attack if player is at the front
             if (face_grid_x >= 0 && face_grid_x < GRID_X_COUNT &&
                 face_grid_y >= 0 && face_grid_y < GRID_Y_COUNT &&
-                grid[face_grid_x][face_grid_y] < 0) {
+                (grid[face_grid_x][face_grid_y] == INDEX_PLAYER_1 || grid[face_grid_x][face_grid_y] == INDEX_PLAYER_2)) {
 
                 z->action = ATTACK;
                 z->frame = 0;
@@ -266,7 +270,7 @@ void update_zombie(zombie_t *z) {
                 // Check whether there is still a player at the facing grid
                 if (face_grid_x >= 0 && face_grid_x < GRID_X_COUNT &&
                     face_grid_y >= 0 && face_grid_y < GRID_Y_COUNT &&
-                    grid[face_grid_x][face_grid_y] < 0) {
+                    (grid[face_grid_x][face_grid_y] == INDEX_PLAYER_1 || grid[face_grid_x][face_grid_y] == INDEX_PLAYER_2)) {
 
                     player_t *target;
 
@@ -348,10 +352,10 @@ void try_move_player(player_t *p, int new_x, int new_y) {
         return;
     }
 
-    if (check_no_interference(new_x, new_y, grid_x, grid_y) != 0) {
+    // if (check_no_interference(new_x, new_y, grid_x, grid_y) != 0) {
         // Do not move
-        return;
-    }
+        // return;
+    // }
 
     p->x = new_x;
     p->y = new_y;
@@ -392,13 +396,17 @@ void update_player(player_t *p, int direction, int attack) {
             }
 
             if (attack == 1 && p->fire_interval == 0) {
+                p->fire_dist_dx = dx;
+                p->fire_dist_dy = dy;
+                p->fire_dist = PLAYER_FIRE_RANGE_IN_GRID * GRID_SIZE;  // default case
+
                 for (int i = 1; i <= PLAYER_FIRE_RANGE_IN_GRID; ++i) {
                     int gx = grid_x + dx * i;
                     int gy = grid_y + dy * i;
                     if (gx >= 0 && gx < GRID_X_COUNT && gy >= 0 && gy < GRID_Y_COUNT) {
                         int id = grid[gx][gy];
                         if (id != INDEX_NOTHING) {
-                            if (id < 0) {  
+                            if (id == INDEX_PLAYER_1 || id == INDEX_PLAYER_2) {  
                                 // Fiend fire
                                 break;  // if not break, it's raygun
                             } else {
@@ -413,6 +421,7 @@ void update_player(player_t *p, int direction, int attack) {
                                         z->action = DIE;
                                     }
                                     z->frame = 0;
+                                    p->fire_dist = i * GRID_SIZE;
                                     break;  // if not break, it's raygun
                                 }
                             }
@@ -472,6 +481,7 @@ void init_game() {
     player_1.direction = 0;
     player_1.frame = 0;
     player_1.fire_interval = 0;
+    player_1.fire_dist = 0;
 
     player_2.x = PLAYER_2_BORN_X;
     player_2.y = PLAYER_2_BORN_Y;
@@ -483,6 +493,7 @@ void init_game() {
     player_2.direction = 0;
     player_2.frame = 0;
     player_2.fire_interval = 0;
+    player_2.fire_dist = 0;
 
     for (i = 0; i < MAX_ZOMBIES_ON_SCREEN; i++) {
         zombie[i].index = i;
@@ -513,18 +524,14 @@ void draw_zombie(const zombie_t *z) {
     int width, height, flip_x, half_width, half_height;
     switch (z->action) {
         case WALK:
+        case ROTATE:
             width = ZOMBIE_WALK_WIDTH[z->direction];
             height = ZOMBIE_WALK_HEIGHT[z->direction];
-            flip_x = ZOMBIE_WALK_FLIP_X[z->direction];
+            flip_x = (z->direction >= 5);
             if (z->frame >= ZOMBIE_WALK_FRAME_COUNT) {
                 printf("EXCEED ZOMBIE_WALK_FRAME_COUNT!\n");
                 return;
             }
-            break;
-        case ROTATE:
-            width = ZOMBIE_WALK_WIDTH[z->direction];
-            height = ZOMBIE_WALK_HEIGHT[z->direction];
-            flip_x = ZOMBIE_WALK_FLIP_X[z->direction];
             break;
         case ATTACK:
             width = ZOMBIE_ATTACK_WIDTH[z->direction];
@@ -645,6 +652,25 @@ void draw_player(const player_t *p) {
             printf("INVALID PLAYER STATE!\n");
             return;
     }
+
+    if (p->fire_interval > PLAYER_FIRE_INTERVAL / 2) {
+        if (p->fire_dist_dx != 0 && p->fire_dist_dy != 0) {
+            // Not horizontal or vertical, we can not draw...
+        } else {
+            if (p->fire_dist_dx != 0) {
+                start_x = p->x + half_width * p->fire_dist_dx;
+                end_x = p->x + p->fire_dist;
+                start_y = p->y;
+                end_y = start_y + 1;
+            } else {
+                start_x = p->x;
+                end_x = start_x + 1;
+                start_y = p->y + half_height * p->fire_dist_dy;
+                end_y = p->y + p->fire_dist;
+            }
+            draw(start_x, end_x, start_y, end_y, GUN_LINE_OFFSET, 0, 0);
+        }
+    }
 }
 
 void refresh(int should_update, int direction_1, int direction_2, int attack_1, int attack_2) {
@@ -653,29 +679,43 @@ void refresh(int should_update, int direction_1, int direction_2, int attack_1, 
     int i, gx, gy, id;
 
     for (i = 0; i < MAX_ZOMBIES_ON_SCREEN; ++i) {
-        if (zombie[i].enable == 1) {
-            if (should_update) update_zombie(&zombie[id]);
+        if (zombie[i].enable) {
+            if (should_update) update_zombie(&zombie[i]);
             draw_zombie(&zombie[i]);
         }
     }
-    if (should_update) update_player(&player_1, direction_1, attack_1);
-    draw_player(&player_1);
-    if (should_update) update_player(&player_2, direction_2, attack_2);
-    draw_player(&player_2);
+    if (player_1.enable) {
+        if (should_update) update_player(&player_1, direction_1, attack_1);
+    }
+    if (player_1.enable) {
+        draw_player(&player_1);
+    }
+    if (player_2.enable) {
+        if (should_update) update_player(&player_2, direction_2, attack_2);
+    }
+    if (player_2.enable) {
+        draw_player(&player_2);
+    }
 
-    // for (gy = GRID_Y_COUNT - 1; gy >= 0; gy--) {
-    //     for (gx = 0; gx < GRID_X_COUNT; gx++) {
+    // for (gy = GRID_Y_COUNT - 1; gy >= 0; --gy) {
+    //     for (gx = 0; gx < GRID_X_COUNT; ++gx) {
     //         id = grid[gx][gy];
     //         if (id != INDEX_NOTHING) {
     //             if (id == INDEX_PLAYER_1) {
     //                 if (should_update) update_player(&player_1, direction_1, attack_1);
-    //                 draw_player(&player_1);
+    //                 if (player_1.enable) {
+    //                     draw_player(&player_1);
+    //                 }
     //             } else if (id == INDEX_PLAYER_2) {
     //                 if (should_update) update_player(&player_2, direction_2, attack_2);
-    //                 draw_player(&player_2);
+    //                 if (player_2.enable) {
+    //                     draw_player(&player_2);
+    //                 }
     //             } else {
     //                 if (should_update) update_zombie(&zombie[id]);
-    //                 draw_zombie(&zombie[id]);
+    //                 if (zombie[id].enable) {
+    //                     draw_zombie(&zombie[id]);
+    //                 }
     //             }
     //         }
     //     }

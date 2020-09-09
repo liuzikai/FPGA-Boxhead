@@ -2,8 +2,8 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>Sep 9, 2020 10:41:44 PM</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1599658904911</BspGeneratedUnixTimeStamp>
+        <BspGeneratedTimeStamp>Sep 9, 2020 11:51:29 PM</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1599663089505</BspGeneratedUnixTimeStamp>
         <BspGeneratedLocation>X:\BoxHead\BoxHead\software\boxhead_bsp</BspGeneratedLocation>
         <BspSettingsFile>settings.bsp</BspSettingsFile>
         <SopcDesignFile>..\..\boxhead_soc.sopcinfo</SopcDesignFile>

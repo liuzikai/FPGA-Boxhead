@@ -89,7 +89,7 @@ int main() {
             }
        }
 
-       if (frame_count == 1) {
+       if (frame_count == 0) {
             // Update game state at frame 1
             refresh(1, direction_1, direction_2, attack_1, attack_2);
        } else {
@@ -98,7 +98,7 @@ int main() {
        }
 
        frame_count++;
-       if (frame_count == 2) {
+       if (frame_count == 1) {
            frame_count = 0;
        }
 
