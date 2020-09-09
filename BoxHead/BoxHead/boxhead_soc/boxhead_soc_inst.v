@@ -29,6 +29,7 @@
 		.sdram_wire_dq                          (<connected-to-sdram_wire_dq>),                          //                        .dq
 		.sdram_wire_dqm                         (<connected-to-sdram_wire_dqm>),                         //                        .dqm
 		.sdram_wire_ras_n                       (<connected-to-sdram_wire_ras_n>),                       //                        .ras_n
-		.sdram_wire_we_n                        (<connected-to-sdram_wire_we_n>)                         //                        .we_n
+		.sdram_wire_we_n                        (<connected-to-sdram_wire_we_n>),                        //                        .we_n
+		.sw_wire_export                         (<connected-to-sw_wire_export>)                          //                 sw_wire.export
 	);
 

@@ -7,7 +7,6 @@
 
 #include "keyboard/keyboard.h"
 #include "graphic/graphic_engine.h"
-#include "graphic/resource.h"
 #include "game_logic.h"
 
 static const unsigned char DKEY_KEYCODE_1[4] = {
@@ -49,12 +48,12 @@ int main() {
     unsigned char dkey_pressed_1[4];  // {W, D, S, A}
     unsigned char dkey_pressed_2[4];  // {up, right, down, left}
 
-    int direction_1, direction_2;
-    int attack_1, attack_2;
+    int direction_1 = -1, direction_2 = -1;
+    int attack_1 = 0, attack_2 = 0;
 
     while (1) {
 
-//        if (frame_count == 0) {
+       if (frame_count == 0) {
             // Fetch keycodes at frame 0
             if (keyboard_fetch((alt_u16 *) (&keycode)) != 0) {
                 // Failed to fetch keycode
@@ -88,20 +87,20 @@ int main() {
                     attack_2 = 1;
                 }
             }
-//        }
+       }
 
-//        if (frame_count == 1) {
+       if (frame_count == 1) {
             // Update game state at frame 1
             refresh(1, direction_1, direction_2, attack_1, attack_2);
-//        } else {
+       } else {
             // For other frames, only draw
-//            refresh(0, direction_1, direction_2, attack_1, attack_2);
-//        }
+            refresh(0, direction_1, direction_2, attack_1, attack_2);
+       }
 
-//        frame_count++;
-//        if (frame_count == 2) {
-//            frame_count = 0;
-//        }
+       frame_count++;
+       if (frame_count == 2) {
+           frame_count = 0;
+       }
 
 
         wait_for_next_frame();

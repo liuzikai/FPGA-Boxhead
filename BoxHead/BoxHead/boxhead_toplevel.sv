@@ -1,9 +1,9 @@
 module boxhead_toplevel(
     input  logic        CLOCK_50,
     input  logic [3:0]  KEY,
+    input  logic [15:0] SW,
     output logic [7:0]  LEDG,
-    output logic [6:0]  HEX0, 
-                        HEX1,
+    output logic [6:0]  HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, HEX6, HEX7,
 
     // SRAM Interface
     output logic        SRAM_CE_N, 
@@ -142,10 +142,16 @@ module boxhead_toplevel(
         .OTG_RST_N(OTG_RST_N)
     );
 
-    logic [7:0] keycode;
+    logic [31:0] keycode;
 
     hex_driver hex_driver_0 (keycode[3:0], HEX0);
     hex_driver hex_driver_1 (keycode[7:4], HEX1);
+    hex_driver hex_driver_2 (keycode[11:8], HEX2);
+    hex_driver hex_driver_3 (keycode[15:12], HEX3);
+    hex_driver hex_driver_4 (keycode[19:16], HEX4);
+    hex_driver hex_driver_5 (keycode[23:20], HEX5);
+    hex_driver hex_driver_6 (keycode[27:24], HEX6);
+    hex_driver hex_driver_7 (keycode[31:28], HEX7);
 
     // ================================ SOC (including Copy Engine) ================================
 
@@ -175,6 +181,7 @@ module boxhead_toplevel(
         .otg_hpi_reset_export(hpi_reset),
 
         .keycode_export(keycode),
+        .sw_wire_export(SW),
 
         .copy_engine_export_data_src_data(src_data),
         .copy_engine_export_data_src_addr(src_addr),

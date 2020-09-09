@@ -30,7 +30,8 @@ module boxhead_soc (
 	sdram_wire_dq,
 	sdram_wire_dqm,
 	sdram_wire_ras_n,
-	sdram_wire_we_n);	
+	sdram_wire_we_n,
+	sw_wire_export);	
 
 	input		clk_clk;
 	input	[15:0]	copy_engine_export_data_src_data;
@@ -44,7 +45,7 @@ module boxhead_soc (
 	output		copy_engine_export_data_engine_done;
 	output		copy_engine_export_data_engine_execute;
 	input	[3:0]	key_wire_export;
-	output	[7:0]	keycode_export;
+	output	[31:0]	keycode_export;
 	output	[1:0]	otg_hpi_address_export;
 	output		otg_hpi_cs_export;
 	input	[15:0]	otg_hpi_data_in_port;
@@ -63,4 +64,5 @@ module boxhead_soc (
 	output	[3:0]	sdram_wire_dqm;
 	output		sdram_wire_ras_n;
 	output		sdram_wire_we_n;
+	input	[15:0]	sw_wire_export;
 endmodule

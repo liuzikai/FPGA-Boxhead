@@ -6,7 +6,7 @@
 
 #include "system.h"
 
-volatile unsigned int *ENGINE_REGS = (unsigned int *) (0x40);
+volatile unsigned int *ENGINE_REGS = (unsigned int *) COPY_ENGINE_CORE_BASE;
 
 void graphic_engine_reset() {
 	ENGINE_REGS[7] = 0;
@@ -22,6 +22,7 @@ void draw(int start_x, int end_x, int start_y, int end_y, int src_offset, int pa
 
 		// Clear Execute
 		ENGINE_REGS[7] = 0;
+        ENGINE_REGS[7] = 0;
 		while ((ENGINE_REGS[15] & 0x1) != 0) {}  // wait for reset
 	}
 //    printf("Graphic engine done!\n");
@@ -44,8 +45,11 @@ void wait_for_next_frame() {
 
     static unsigned int current_frame = 0;
 
+    if (current_frame != ENGINE_REGS[14]) {
+        printf("SKIPPED FRAME!\n");
+        return;
+    }
     // Wait for switch to next frame
     while (current_frame == ENGINE_REGS[14]) {}
-
     current_frame = ENGINE_REGS[14];
 }
