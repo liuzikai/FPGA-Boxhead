@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "game_logic.h"
-#include "resource.h"
+#include "graphic/resource.h"
 #include "graphic/graphic_engine.h"
 
 #define DISPLAY_WIDTH  640
@@ -24,19 +24,19 @@
 #define ZOMBIE_BORN_X (DISPLAY_WIDTH / 2)
 #define ZOMBIE_BORN_Y (MIN_Y)
 
-#define MAX_TOTAL_ZOMBIES 10 // maximum number of zombies a player need to kill in one game
-#define MAX_ZOMBIES_ON_SCREEN 5 // maximum number of zombies that can appear on the screen
+#define MAX_TOTAL_ZOMBIES 100 // maximum number of zombies a player need to kill in one game
+#define MAX_ZOMBIES_ON_SCREEN 20 // maximum number of zombies that can appear on the screen
 
-#define ZOMBIE_MOVE 4 // moving speed for zombies
-#define PLAYER_MOVE 8 // moving speed for player
+#define ZOMBIE_MOVE 1 // moving speed for zombies
+#define PLAYER_MOVE 6 // moving speed for player
 
 #define ZOMBIE_ATTACK 10 // HP decrease when a zombie is close to the player
-#define PLAYER_ATTACK 50 // HP decrease when the player shoots at a zombie
+#define PLAYER_ATTACK 25 // HP decrease when the player shoots at a zombie
 
 #define PLAYER_FIRE_INTERVAL 10
 #define PLAYER_FIRE_RANGE_IN_GRID 15
 
-#define ADD_ZOMBIE_INTERVAL 100
+#define ADD_ZOMBIE_INTERVAL 20
 
 #define ZOMBIE_ROTATE_FRAME_COUNT 4
 
@@ -89,13 +89,13 @@ static int cur_zombie_counter = 0;
  */
 
 static const int DX[8] = {0, 1, 1, 1, 0, -1, -1, -1};
-static const int DY[8] = {1, 1, 0, -1, -1, -1, 0, 1};
-static const int ZOMBIE_HIT_FRAME_MOVEMENT[ZOMBIE_HIT_FRONT_FRAME_COUNT] = {
-        12, 10, 8, 7, 6, 5, 4, 3, 2, 1, 1
-};
-static const int PLAYER_HIT_FRAME_MOVEMENT[PLAYER_HIT_FRONT_FRAME_COUNT] = {
-        12, 10, 8, 7, 6, 5, 4, 3, 2, 1, 1
-};
+static const int DY[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+// static const int ZOMBIE_HIT_FRAME_MOVEMENT[ZOMBIE_HIT_FRONT_FRAME_COUNT] = {
+//         12, 10, 8, 7, 6, 5, 4, 3, 2, 1, 1
+// };
+// static const int PLAYER_HIT_FRAME_MOVEMENT[PLAYER_HIT_FRONT_FRAME_COUNT] = {
+//         12, 10, 8, 7, 6, 5, 4, 3, 2, 1, 1
+// };
 
 int calc_zombie_direction(zombie_t *z) {
     int delta_x, delta_y;
@@ -131,16 +131,16 @@ int calc_zombie_direction(zombie_t *z) {
     }
 
     if (delta_x > 0) {
-        if (delta_y > 0) return 1;
-        else if (delta_y < 0) return 3;
+        if (delta_y > 0) return 3;
+        else if (delta_y < 0) return 1;
         else return 2;
     } else if (delta_x < 0) {
-        if (delta_y > 0) return 7;
-        else if (delta_y < 0) return 5;
+        if (delta_y > 0) return 5;
+        else if (delta_y < 0) return 7;
         else return 6;
     } else {
-        if (delta_y > 0) return 0;
-        else if (delta_y < 0) return 4;
+        if (delta_y > 0) return 4;
+        else if (delta_y < 0) return 0;
         else {
             printf("CENTERED DIRECTION!\n");
             return 0;
@@ -149,7 +149,9 @@ int calc_zombie_direction(zombie_t *z) {
 }
 
 void try_move_zombie(zombie_t *z, int new_x, int new_y) {
-    int grid_x = TO_GRID(z->x), grid_y = TO_GRID(z->y);
+	int dx = DX[z->direction], dy = DY[z->direction];
+	int grid_x = TO_GRID(z->x), grid_y = TO_GRID(z->y);
+	int face_grid_x = grid_x + dx, face_grid_y = grid_y + dy;
 
     if (new_x >= MAX_X) {
         new_x = MAX_X - 1;
@@ -167,15 +169,38 @@ void try_move_zombie(zombie_t *z, int new_x, int new_y) {
 
     if (grid_x == new_grid_x && grid_y == new_grid_y) {
         // Stay in the same grid
-        z->x = new_x;
-        z->y = new_y;
     } else if (grid[new_grid_x][new_grid_y] == INDEX_NOTHING) {
         // Move to new grid, no collision
-        grid[grid_x][grid_y] = INDEX_NOTHING;
-        grid[new_grid_x][new_grid_y] = z->index;
-        z->x = new_x;
-        z->y = new_y;
-    }  // otherwise, do not move
+    } else {
+    	return;
+    }
+
+    if (face_grid_x >= 0 && face_grid_x < GRID_X_COUNT &&
+		face_grid_y >= 0 && face_grid_y < GRID_Y_COUNT) {
+
+		int id = grid[face_grid_x][face_grid_y];
+		int target_x, target_y;
+		if (id > 0) {
+			target_x = zombie[id].x;
+			target_y = zombie[id].y;
+		} else if (id == INDEX_PLAYER_1) {
+			target_x = player_1.x;
+			target_y = player_1.y;
+		} else {
+			target_x = player_2.x;
+			target_y = player_2.y;
+		}
+
+		if (abs(target_x - new_x) > 20 && abs(target_y - new_y) > 20) {
+			if (grid[new_grid_x][new_grid_y] == INDEX_NOTHING) {
+				// Move to new grid, no collision
+				grid[grid_x][grid_y] = INDEX_NOTHING;
+				grid[new_grid_x][new_grid_y] = z->index;
+			}
+			z->x = new_x;
+			z->y = new_y;
+		}
+	}
 }
 
 void update_zombie(zombie_t *z) {
@@ -251,11 +276,11 @@ void update_zombie(zombie_t *z) {
             }
             break;
         case HIT:
-            try_move_zombie(z,
-                            z->x - dx * ZOMBIE_HIT_FRAME_MOVEMENT[z->frame],
-                            z->y - dy * ZOMBIE_HIT_FRAME_MOVEMENT[z->frame]);
-            z->frame++;
-            if (z->frame >= ZOMBIE_HIT_FRONT_FRAME_COUNT) {
+            // try_move_zombie(z,
+            //                 z->x - dx * ZOMBIE_HIT_FRAME_MOVEMENT[z->frame],
+            //                 z->y - dy * ZOMBIE_HIT_FRAME_MOVEMENT[z->frame]);
+            // z->frame++;
+            // if (z->frame >= ZOMBIE_HIT_FRONT_FRAME_COUNT) {
                 if (z->blood > 0) {
                     z->action = WALK;
                     z->frame = 0;
@@ -265,16 +290,17 @@ void update_zombie(zombie_t *z) {
                     z->frame = 0;
                     return;
                 }
-            }
+            // }
             break;
         case DIE:
-            z->frame++;
-            if (z->frame >= ZOMBIE_DIE_FRAME_COUNT) {
+        
+            // z->frame++;
+            // if (z->frame >= ZOMBIE_DIE_FRAME_COUNT) {
                 z->enable = 0;
                 grid[grid_x][grid_y] = INDEX_NOTHING;
                 cur_zombie_counter--;
                 return;
-            }
+            // }
             break;
     }
 }
@@ -302,10 +328,24 @@ void try_move_player(player_t *p, int new_x, int new_y) {
         p->y = new_y;
     } else if (grid[new_grid_x][new_grid_y] == INDEX_NOTHING) {
         // Move to new grid, no collision
-        grid[grid_x][grid_y] = INDEX_NOTHING;
-        grid[new_grid_x][new_grid_y] = (p == &player_1 ? INDEX_PLAYER_1 : INDEX_PLAYER_2);
-        p->x = new_x;
-        p->y = new_y;
+		int id = grid[new_grid_x][new_grid_y];
+		int target_x, target_y;
+		if (id > 0) {
+			target_x = zombie[id].x;
+			target_y = zombie[id].y;
+		} else if (id == INDEX_PLAYER_1) {
+			target_x = player_1.x;
+			target_y = player_1.y;
+		} else {
+			target_x = player_2.x;
+			target_y = player_2.y;
+		}
+		if (abs(target_x - new_x) > 32 && abs(target_y - new_y) > 32) {
+			grid[grid_x][grid_y] = INDEX_NOTHING;
+			grid[new_grid_x][new_grid_y] = (p == &player_1 ? INDEX_PLAYER_1 : INDEX_PLAYER_2);
+			p->x = new_x;
+			p->y = new_y;
+		}
     }  // otherwise, do not move
 }
 
@@ -363,11 +403,11 @@ void update_player(player_t *p, int direction, int attack) {
 
             break;
         case HIT:
-            try_move_player(p,
-                            p->x - dx * PLAYER_HIT_FRAME_MOVEMENT[p->frame],
-                            p->y - dy * PLAYER_HIT_FRAME_MOVEMENT[p->frame]);
-            p->frame++;
-            if (p->frame >= PLAYER_HIT_FRONT_FRAME_COUNT) {
+            // try_move_player(p,
+            //                 p->x - dx * PLAYER_HIT_FRAME_MOVEMENT[p->frame],
+            //                 p->y - dy * PLAYER_HIT_FRAME_MOVEMENT[p->frame]);
+            // p->frame++;
+            // if (p->frame >= PLAYER_HIT_FRONT_FRAME_COUNT) {
                 if (p->blood > 0) {
                     p->action = WALK;
                     p->frame = 0;
@@ -377,15 +417,15 @@ void update_player(player_t *p, int direction, int attack) {
                     p->frame = 0;
                     return;
                 }
-            }
+            // }
             break;
         case DIE:
             p->frame++;
-            if (p->frame >= PLAYER_DIE_FRAME_COUNT) {
+            // if (p->frame >= PLAYER_DIE_FRAME_COUNT) {
                 p->enable = 0;
                 grid[grid_x][grid_y] = INDEX_NOTHING;
                 return;
-            }
+            // }
             break;
         default:
             printf("INVALID PLAYER STATE!\n");
@@ -475,22 +515,22 @@ void draw_zombie(const zombie_t *z) {
             }
             break;
         case HIT:
-            width = ZOMBIE_HIT_FRONT_WIDTH[z->direction];
-            height = ZOMBIE_HIT_FRONT_HEIGHT[z->direction];
-            flip_x = ZOMBIE_HIT_FRONT_FLIP_X[z->direction];
-            if (z->frame >= ZOMBIE_HIT_FRONT_FRAME_COUNT) {
-                printf("EXCEED ZOMBIE_HIT_FRONT_FRAME_COUNT!\n");
-                return;
-            }
+            // width = ZOMBIE_HIT_FRONT_WIDTH[z->direction];
+            // height = ZOMBIE_HIT_FRONT_HEIGHT[z->direction];
+            // flip_x = ZOMBIE_HIT_FRONT_FLIP_X[z->direction];
+            // if (z->frame >= ZOMBIE_HIT_FRONT_FRAME_COUNT) {
+            //     printf("EXCEED ZOMBIE_HIT_FRONT_FRAME_COUNT!\n");
+            //     return;
+            // }
             break;
         case DIE:
-            width = ZOMBIE_DIE_WIDTH[z->direction];
-            height = ZOMBIE_DIE_HEIGHT[z->direction];
-            flip_x = ZOMBIE_DIE_FLIP_X[z->direction];
-            if (z->frame >= ZOMBIE_DIE_FRAME_COUNT) {
-                printf("EXCEED ZOMBIE_DIE_FRAME_COUNT!\n");
-                return;
-            }
+            // width = ZOMBIE_DIE_WIDTH[z->direction];
+            // height = ZOMBIE_DIE_HEIGHT[z->direction];
+            // flip_x = ZOMBIE_DIE_FLIP_X[z->direction];
+            // if (z->frame >= ZOMBIE_DIE_FRAME_COUNT) {
+            //     printf("EXCEED ZOMBIE_DIE_FRAME_COUNT!\n");
+            //     return;
+            // }
             break;
         default:
             printf("INVALID ZOMBIE STATE!\n");
@@ -516,10 +556,10 @@ void draw_zombie(const zombie_t *z) {
             draw(start_x, end_x, start_y, end_y, ZOMBIE_ATTACK_OFFSET[z->direction][z->frame], 0, flip_x);
             break;
         case HIT:
-            draw(start_x, end_x, start_y, end_y, ZOMBIE_HIT_FRONT_OFFSET[z->direction][z->frame], 0, flip_x);
+            // draw(start_x, end_x, start_y, end_y, ZOMBIE_HIT_FRONT_OFFSET[z->direction][z->frame], 0, flip_x);
             break;
         case DIE:
-            draw(start_x, end_x, start_y, end_y, ZOMBIE_DIE_OFFSET[z->direction][z->frame], 0, flip_x);
+            // draw(start_x, end_x, start_y, end_y, ZOMBIE_DIE_OFFSET[z->direction][z->frame], 0, flip_x);
             break;
         default:
             printf("INVALID ZOMBIE STATE!\n");
@@ -540,22 +580,22 @@ void draw_player(const player_t *p) {
             }
             break;
         case HIT:
-            width = PLAYER_HIT_FRONT_WIDTH[p->direction];
-            height = PLAYER_HIT_FRONT_HEIGHT[p->direction];
-            flip_x = PLAYER_HIT_FRONT_FLIP_X[p->direction];
-            if (p->frame >= PLAYER_HIT_FRONT_FRAME_COUNT) {
-                printf("EXCEED PLAYER_HIT_FRONT_FRAME_COUNT!\n");
-                return;
-            }
+            // width = PLAYER_HIT_FRONT_WIDTH[p->direction];
+            // height = PLAYER_HIT_FRONT_HEIGHT[p->direction];
+            // flip_x = PLAYER_HIT_FRONT_FLIP_X[p->direction];
+            // if (p->frame >= PLAYER_HIT_FRONT_FRAME_COUNT) {
+            //     printf("EXCEED PLAYER_HIT_FRONT_FRAME_COUNT!\n");
+            //     return;
+            // }
             break;
         case DIE:
-            width = PLAYER_DIE_WIDTH[p->direction];
-            height = PLAYER_DIE_HEIGHT[p->direction];
-            flip_x = PLAYER_DIE_FLIP_X[p->direction];
-            if (p->frame >= PLAYER_DIE_FRAME_COUNT) {
-                printf("EXCEED PLAYER_DIE_FRAME_COUNT!\n");
-                return;
-            }
+            // width = PLAYER_DIE_WIDTH[p->direction];
+            // height = PLAYER_DIE_HEIGHT[p->direction];
+            // flip_x = PLAYER_DIE_FLIP_X[p->direction];
+            // if (p->frame >= PLAYER_DIE_FRAME_COUNT) {
+            //     printf("EXCEED PLAYER_DIE_FRAME_COUNT!\n");
+            //     return;
+            // }
             break;
         default:
             printf("INVALID PLAYER STATE!\n");
@@ -575,10 +615,10 @@ void draw_player(const player_t *p) {
             draw(start_x, end_x, start_y, end_y, PLAYER_WALK_OFFSET[p->direction][p->frame], 0, flip_x);
             break;
         case HIT:
-            draw(start_x, end_x, start_y, end_y, PLAYER_HIT_FRONT_OFFSET[p->direction][p->frame], 0, flip_x);
+            // draw(start_x, end_x, start_y, end_y, PLAYER_HIT_FRONT_OFFSET[p->direction][p->frame], 0, flip_x);
             break;
         case DIE:
-            draw(start_x, end_x, start_y, end_y, PLAYER_DIE_OFFSET[p->direction][p->frame], 0, flip_x);
+            // draw(start_x, end_x, start_y, end_y, PLAYER_DIE_OFFSET[p->direction][p->frame], 0, flip_x);
             break;
         default:
             printf("INVALID PLAYER STATE!\n");
