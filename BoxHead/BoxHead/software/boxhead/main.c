@@ -7,6 +7,7 @@
 
 #include "keyboard/keyboard.h"
 #include "graphic/graphic_engine.h"
+#include "graphic/resource.h"
 #include "game_logic.h"
 
 static const unsigned char DKEY_KEYCODE_1[4] = {
@@ -48,60 +49,50 @@ int main() {
     unsigned char dkey_pressed_1[4];  // {W, D, S, A}
     unsigned char dkey_pressed_2[4];  // {up, right, down, left}
 
-    int direction_1 = -1, direction_2 = -1;
-    int attack_1 = 0, attack_2 = 0;
+    int direction_1, direction_2;
+    int attack_1, attack_2;
+    int should_update = 1;
 
     while (1) {
 
-       if (frame_count == 0) {
-            // Fetch keycodes at frame 0
-            if (keyboard_fetch((alt_u16 *) (&keycode)) != 0) {
-                // Failed to fetch keycode
-                for (int i = 0; i < 8; i++) {
-                    keycode[i] = 0;
-                }
-                printf("FAILED TO FETCH KEYCODE!\n");
-            }
-
-            // Extract keys
-            for (int key = 0; key < 4; key++) {
-                dkey_pressed_1[key] = dkey_pressed_2[key] = 0;
-                for (int i = 0; i < 8; i++) {
-                    if (keycode[i] == DKEY_KEYCODE_1[key]) {
-                        dkey_pressed_1[key] = 1;
-                    }
-                    if (keycode[i] == DKEY_KEYCODE_2[key]) {
-                        dkey_pressed_2[key] = 1;
-                    }
-                }
-            }
-            direction_1 = keys_to_direction(dkey_pressed_1);
-            direction_2 = keys_to_direction(dkey_pressed_2);
-
-            attack_1 = attack_2 = 0;
+        if (keyboard_fetch((alt_u16 *) (&keycode)) != 0) {
+            // Failed to fetch keycode
             for (int i = 0; i < 8; i++) {
-                if (keycode[i] == 44) {  // Space
-                    attack_1 = 1;
+                keycode[i] = 0;
+            }
+            printf("FAILED TO FETCH KEYCODE!\n");
+        }
+
+        // Extract keys
+        for (int key = 0; key < 4; key++) {
+            dkey_pressed_1[key] = dkey_pressed_2[key] = 0;
+            for (int i = 0; i < 8; i++) {
+                if (keycode[i] == 21) {
+                    init_game();
+                    should_update = 1;
                 }
-                if (keycode[i] == 40) {  // Enter
-                    attack_2 = 1;
+                if (keycode[i] == DKEY_KEYCODE_1[key]) {
+                    dkey_pressed_1[key] = 1;
+                }
+                if (keycode[i] == DKEY_KEYCODE_2[key]) {
+                    dkey_pressed_2[key] = 1;
                 }
             }
-       }
+        }
+        direction_1 = keys_to_direction(dkey_pressed_1);
+        direction_2 = keys_to_direction(dkey_pressed_2);
 
-       if (frame_count == 0) {
-            // Update game state at frame 1
-            refresh(1, direction_1, direction_2, attack_1, attack_2);
-       } else {
-            // For other frames, only draw
-            refresh(0, direction_1, direction_2, attack_1, attack_2);
-       }
-
-       frame_count++;
-       if (frame_count == 1) {
-           frame_count = 0;
-       }
-
+        attack_1 = attack_2 = 0;
+        for (int i = 0; i < 8; i++) {
+            if (keycode[i] == 44) {  // Space
+                attack_1 = 1;
+            }
+            if (keycode[i] == 40) {  // Enter
+                attack_2 = 1;
+            }
+        }
+        
+        should_update = refresh(should_update, direction_1, direction_2, attack_1, attack_2);
 
         wait_for_next_frame();
     }

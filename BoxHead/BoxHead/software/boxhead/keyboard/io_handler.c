@@ -14,7 +14,7 @@ void io_init(void)
 	*otg_hpi_cs = 0;
 	*otg_hpi_reset = 0;
 	*otg_hpi_reset = 1;
-	*otg_hpi_cs = 1;
+	// *otg_hpi_cs = 1;
 }
 /**
  *
@@ -31,11 +31,11 @@ void io_init(void)
 void io_write(alt_u8 Address, alt_u16 Data)
 {
 	*otg_hpi_address = Address;
-	*otg_hpi_cs = 0; // Set chip select
+	// *otg_hpi_cs = 0; // Set chip select
 	*otg_hpi_w = 0;
 	*otg_hpi_data = Data;
 	*otg_hpi_w = 1;
-	*otg_hpi_cs = 1;
+	// *otg_hpi_cs = 1;
 }
 /**
  *
@@ -52,11 +52,11 @@ alt_u16 io_read(alt_u8 Address)
 {
 	alt_u16 temp;
 	*otg_hpi_address = Address;
-	*otg_hpi_cs = 0; // Set chip select
+	// *otg_hpi_cs = 0; // Set chip select
 	*otg_hpi_r = 0;
 	temp = *otg_hpi_data;
 	*otg_hpi_r = 1; // Set the read signal back to 1 after reading
 	//printf("%x\n",temp);
-	*otg_hpi_cs = 1;
+	// *otg_hpi_cs = 1;
 	return temp;
 }

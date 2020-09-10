@@ -488,7 +488,7 @@ int keyboard_fetch(alt_u16 *keycode_ptr) {
 
     // We only need the first keycode, which is at the lower byte of keycode.
     // Send the keycode to hardware via PIO.
-    // *keycode_base = *keycode_ptr & 0xffu;
+    *keycode_base = *keycode_ptr & 0xffu;
 
     // NOTE: [liuzikai] disable hot plug function to reduce the time consumption
 

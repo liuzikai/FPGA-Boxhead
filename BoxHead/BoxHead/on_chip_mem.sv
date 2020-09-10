@@ -28,7 +28,7 @@ module on_chip_mem_core (
     output logic [15:0] data_out
 );
     
-    logic [15:0] mem [0:187508];
+    logic [15:0] mem [0:164391];
     
     initial
     begin

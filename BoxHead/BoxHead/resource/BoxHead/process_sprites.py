@@ -1,7 +1,7 @@
 import os
 import argparse
 from PIL import Image
-from progress.bar import Bar
+# from progress.bar import Bar
 
 
 def rgb_to_16bit(rgb: (int, int, int)) -> int:
@@ -16,23 +16,22 @@ def hex_to_rgb(h: str) -> (int, int, int):
     return int(h[0:4], 16), int(h[4:6], 16), int(h[6:8], 16)
 
 
-RESIZE_FACTOR = 0.25
+RESIZE_FACTOR = 0.3
 ALPHA_THRESHOLD = 150
 TRANSPARENT_COLOR = 0x07E0
 
 FRAMES = {
-    "zombie_walk": [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8],
-    "player_walk": [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8],
-    "zombie_hit_front": [1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2],
-    "zombie_attack": [1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4],
-    "zombie_die": [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5],
-    "player_hit_front": [1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2],
-    "player_die": [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5],
-}
+    "zombie_walk": [1, 2, 3, 4, 5, 6, 7, 8],
+    # "zombie_hit_front": [1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2],
+    # "zombie_hit_back": [1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2],
+    # "zombie_die": [1, 2, 3, 4, 5, 5, 5, 5, 5, 5, 5],
+    "zombie_attack": [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4],
 
-STATIC_IMAGES = [
-    "blood_1", "blood_2", "blood_3", "remain_blood", "gun_line", "P1", "P2", "wall"
-]
+    "player_walk": [1, 2, 3, 4, 5, 6, 7, 8],
+    # "player_hit_front": [1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2],
+    # "player_hit_back": [1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2],
+    # "player_die": [1, 2, 3, 4, 5, 5, 5, 5, 5, 5, 5],
+}
 
 DIRECTIONS = [0, 45, 90, 135, 180, 225, 270, 315]
 
@@ -126,39 +125,6 @@ def run() -> None:
                 img_data[action][direction][param] = img_data[action][res_direction][param]
             img_data[action][direction]["flip_x"] = flip_x
 
-    # ================ Process static images ================
-
-    static_img_data = {}  # name: str -> parameters: dict
-
-    for image_name in STATIC_IMAGES:
-        img_filename = image_name + ".png"
-        out_filename = os.path.join("out", img_filename)
-
-        img = Image.open(img_filename).convert("RGBA")
-        img = img.resize((int(img.size[0] * RESIZE_FACTOR), int(img.size[1] * RESIZE_FACTOR)))
-        out_img = Image.new('RGB', img.size)
-
-        static_img_data[image_name] = {
-            "width" : img.size[0],
-            "height": img.size[1],
-            "offset": offset
-        }
-
-        for y in range(img.size[1]):
-            for x in range(img.size[0]):
-                r, g, b, a = img.getpixel((x, y))
-                if a < ALPHA_THRESHOLD:
-                    color = TRANSPARENT_COLOR
-                else:
-                    color = rgb_to_16bit((r, g, b))
-
-                ocm_data.append(color)
-                offset += 1
-
-                out_img.putpixel((x, y), revert_to_rgb(color))
-
-        out_img.save(out_filename)
-
     # ================ Generate resource.h ================
 
     def_file = open("resource.h", "w")
@@ -191,12 +157,6 @@ def run() -> None:
         def_file.write(",\n".join(lines))
         def_file.write("\n};\n")
         def_file.write("\n\n")
-
-    for image_name in STATIC_IMAGES:
-        def_file.write("#define %s_WIDTH %d\n" % (image_name.upper(), static_img_data[image_name]["width"]))
-        def_file.write("#define %s_HEIGHT %d\n" % (image_name.upper(), static_img_data[image_name]["height"]))
-        def_file.write("#define %s_OFFSET 0x%05X\n" % (image_name.upper(), static_img_data[image_name]["offset"]))
-        def_file.write("\n")
 
     def_file.write("#endif  // RESOURCE_H_\n")
     def_file.close()
