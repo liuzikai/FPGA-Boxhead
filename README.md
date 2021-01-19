@@ -1,6 +1,6 @@
 # FPGA-Boxhead
 
-[Boxhead](https://www.crazymonkeygames.com/series/Boxhead-Series.php) video game on DE2-115 FPGA as UIUC ECE385 Digital Systems Lab Spring 2020 ZJUI section final project .
+[Boxhead](https://www.crazymonkeygames.com/series/Boxhead-Series.php) video game on DE2-115 FPGA as UIUC ECE385 Digital Systems Lab Spring 2020 ZJUI section design project.
 
 ## Features
 
